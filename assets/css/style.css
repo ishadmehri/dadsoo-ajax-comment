@@ -1,0 +1,298 @@
+/* استایل‌های پایه */
+.dadsoo-comment-form {
+    margin: 30px 0;
+    padding: 25px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.dadsoo-comment-form .form-group {
+    margin-bottom: 20px;
+}
+
+.dadsoo-comment-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.dadsoo-comment-form input[type="text"],
+.dadsoo-comment-form input[type="email"],
+.dadsoo-comment-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border-color 0.3s;
+}
+
+.dadsoo-comment-form textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.dadsoo-submit-btn {
+    background: var(--like-color);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.dadsoo-submit-btn:hover {
+    background: #005d8c;
+}
+
+.dadsoo-message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.dadsoo-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.dadsoo-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* استایل‌های لیست کامنت‌ها */
+.dadsoo-comments-container {
+    margin: 40px 0;
+}
+
+.dadsoo-comment {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.dadsoo-comment.depth-1 {
+    margin-left: 40px;
+}
+
+.dadsoo-comment.depth-2 {
+    margin-left: 80px;
+}
+
+.dadsoo-comment.depth-3 {
+    margin-left: 120px;
+}
+
+.dadsoo-comment-body {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* هدر کامنت */
+.dadsoo-comment-header {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 15px;
+}
+
+.dadsoo-comment-author-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dadsoo-comment-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.dadsoo-comment-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dadsoo-comment-author {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.dadsoo-comment-date {
+    color: #7f8c8d;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+/* متن کامنت */
+.dadsoo-comment-text {
+    width: 100%;
+    margin: 15px 0;
+    line-height: 1.8;
+    white-space: pre-line;
+    color: #34495e;
+}
+
+/* فوتر کامنت */
+.dadsoo-comment-footer {
+    display: inline-flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+    padding-top: 15px;
+}
+
+.dadsoo-comment-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* استایل دکمه‌های لایک/دیسلایک */
+.dadsoo-vote-btn {
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #000000;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.dadsoo-vote-btn:hover {
+    background: transparent;
+    color: #000000;
+}
+
+.dadsoo-vote-btn .icon {
+    width: 20px;
+    height: 20px;
+    transition: all 0.3s;
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    background-color: currentColor;
+}
+
+/* آیکون لایک */
+.dadsoo-vote-btn[data-vote="like"] .icon {
+    mask-image: url('../icons/like-outline.svg');
+    color: var(--like-color);
+    opacity: 0.7;
+}
+
+.dadsoo-vote-btn[data-vote="like"].active .icon {
+    mask-image: url('../icons/like.svg');
+    opacity: 1;
+}
+
+/* آیکون دیسلایک */
+.dadsoo-vote-btn[data-vote="dislike"] .icon {
+    mask-image: url('../icons/dislike-outline.svg');
+    color: var(--dislike-color);
+    opacity: 0.7;
+}
+
+.dadsoo-vote-btn[data-vote="dislike"].active .icon {
+    mask-image: url('../icons/dislike.svg');
+    opacity: 1;
+}
+
+/* آیکون پاسخ */
+.dadsoo-reply-btn {
+    display: flex !important;
+    align-items: center;
+    gap: 5px;
+    color: var(--reply-color) !important;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s;
+    background: transparent !important;
+}
+
+.dadsoo-reply-btn .icon {
+    width: 16px;
+    height: 16px;
+    mask-image: url('../icons/reply.svg');
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    background-color: currentColor;
+    transition: all 0.3s;
+}
+
+.dadsoo-reply-btn:hover {
+    color: var(--like-color);
+}
+
+.dadsoo-reply-btn:hover .icon {
+    transform: translateX(3px);
+}
+
+/* فرم پاسخ */
+.dadsoo-reply-form {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+/* پاسخ‌ها */
+.dadsoo-replies {
+    margin-top: 25px;
+}
+
+/* دکمه بارگذاری بیشتر */
+.dadsoo-load-more {
+    display: block;
+    margin: 30px auto;
+    padding: 12px 25px;
+    background: var(--like-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.dadsoo-load-more:hover {
+    background: #005d8c;
+}
+
+/* واکنشگرایی */
+@media (max-width: 768px) {
+    .dadsoo-comment.depth-1,
+    .dadsoo-comment.depth-2,
+    .dadsoo-comment.depth-3 {
+        margin-left: 20px;
+    }
+    
+    .dadsoo-comment-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .dadsoo-comment-date {
+        margin-top: 5px;
+    }
+}
