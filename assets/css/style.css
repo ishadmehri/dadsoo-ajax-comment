@@ -243,6 +243,14 @@
     fill: currentColor;
 }
 
+/* یک SVG آپلودی معمولاً fill صریح روی هر گره دارد (مثلاً وقتی از فیگما یا ایلاستریتور
+   خروجی گرفته می‌شود)، و آن مقدار روی خودِ گره از وراثتِ fill والد جلوتر است، پس رنگ
+   کنترل استایل را نادیده می‌گیرد. اینجا فقط fill صریح بازنویسی می‌شود؛ fill="none"
+   دست‌نخورده می‌ماند چون معمولاً برای بخش خط‌داری از یک آیکون ترکیبی عمدی است. */
+.dadsoo-vote-btn .elinweb-custom-vote-icon svg [fill]:not([fill="none"]) {
+    fill: currentColor;
+}
+
 .dadsoo-vote-btn .elinweb-custom-vote-icon img {
     width: 20px;
     height: 20px;

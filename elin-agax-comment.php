@@ -3,7 +3,7 @@
 Plugin Name: Elin Agax Comment
 Plugin URI: https://elinweb.ir
 Description: سیستم کامنت‌گذاری پیشرفته Elinweb با پاسخ‌های تو در تو و مدیریت کامل
-Version: 2.3.0
+Version: 2.3.1
 Author: ایمان شادمهری
 Author URI: https://elinweb.ir
 Requires at least: 5.8
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('ELINWEB_AGAX_COMMENT_VERSION', '2.3.0');
+define('ELINWEB_AGAX_COMMENT_VERSION', '2.3.1');
 
 class Elinweb_Agax_Comment
 {
