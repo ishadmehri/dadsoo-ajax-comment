@@ -79,16 +79,12 @@
     position: relative;
 }
 
-.dadsoo-comment.depth-1 {
-    margin-left: 40px;
-}
-
-.dadsoo-comment.depth-2 {
-    margin-left: 80px;
-}
-
+/* پاسخ‌ها در DOM تو در تو هستند، پس هر سطح فقط نسبت به سطح بالاتر تورفتگی می‌گیرد.
+   margin-inline-start در سایت‌های راست‌به‌چپ هم سمت درست را تورفته می‌کند. */
+.dadsoo-comment.depth-1,
+.dadsoo-comment.depth-2,
 .dadsoo-comment.depth-3 {
-    margin-left: 120px;
+    margin-inline-start: 40px;
 }
 
 .dadsoo-comment-body {
@@ -100,6 +96,13 @@
     padding: 20px;
     background: #fff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* بدون این عرض، فرم پاسخ و فهرست پاسخ‌ها به‌عنوان آیتم فلکس به اندازهٔ محتوا جمع می‌شوند؛
+   jQuery ارتفاع بازشدن فرم را صفر می‌خواند و slideDown هیچ‌وقت باز نمی‌شود. */
+.dadsoo-comment-body > .dadsoo-reply-form,
+.dadsoo-comment-body > .dadsoo-replies {
+    width: 100%;
 }
 
 /* هدر کامنت */
@@ -217,6 +220,47 @@
     opacity: 1;
 }
 
+/* Elementor custom vote icons. */
+.dadsoo-vote-btn .elinweb-custom-vote-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
+    mask-image: none !important;
+    background: transparent !important;
+    opacity: 1 !important;
+}
+
+.dadsoo-vote-btn .elinweb-custom-vote-icon i {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.dadsoo-vote-btn .elinweb-custom-vote-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+.dadsoo-vote-btn .elinweb-custom-vote-icon img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.dadsoo-vote-btn .elinweb-vote-icon-fill {
+    display: none;
+}
+
+.dadsoo-vote-btn.active .elinweb-vote-icon-outline {
+    display: none;
+}
+
+.dadsoo-vote-btn.active .elinweb-vote-icon-fill {
+    display: inline-flex;
+}
+
 /* آیکون پاسخ */
 .dadsoo-reply-btn {
     display: flex !important;
@@ -284,7 +328,7 @@
     .dadsoo-comment.depth-1,
     .dadsoo-comment.depth-2,
     .dadsoo-comment.depth-3 {
-        margin-left: 20px;
+        margin-inline-start: 20px;
     }
     
     .dadsoo-comment-header {

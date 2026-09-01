@@ -3,7 +3,7 @@
 Plugin Name: Elin Agax Comment
 Plugin URI: https://elinweb.ir
 Description: سیستم کامنت‌گذاری پیشرفته Elinweb با پاسخ‌های تو در تو و مدیریت کامل
-Version: 2.2
+Version: 2.3.0
 Author: ایمان شادمهری
 Author URI: https://elinweb.ir
 Requires at least: 5.8
@@ -15,8 +15,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+define('ELINWEB_AGAX_COMMENT_VERSION', '2.3.0');
+
 class Elinweb_Agax_Comment
 {
+    /** بیشترین عمق تو در تویی که استایل‌ها و رندر پشتیبانی می‌کنند. */
+    const MAX_DEPTH = 3;
+
+    /** اندازهٔ پیش‌فرض آواتار بر حسب پیکسل. */
+    const DEFAULT_AVATAR_SIZE = 42;
+
+
     public function __construct()
     {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
@@ -31,11 +40,12 @@ class Elinweb_Agax_Comment
         add_action('wp_ajax_elinweb_agax_reply_comment', array($this, 'handle_reply'));
         add_action('wp_ajax_nopriv_elinweb_agax_reply_comment', array($this, 'handle_reply'));
         add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('elementor/widgets/register', array($this, 'register_elementor_widgets'));
     }
 
     public function enqueue_scripts()
     {
-        wp_enqueue_style('elinweb-agax-comment-style', plugins_url('assets/css/style.css', __FILE__), array(), '2.2');
+        wp_enqueue_style('elinweb-agax-comment-style', plugins_url('assets/css/style.css', __FILE__), array(), ELINWEB_AGAX_COMMENT_VERSION);
 
         // استایل داینامیک برای رنگ‌ها
         $custom_css = "
@@ -47,7 +57,7 @@ class Elinweb_Agax_Comment
         ";
         wp_add_inline_style('elinweb-agax-comment-style', $custom_css);
 
-        wp_enqueue_script('elinweb-agax-comment-script', plugins_url('assets/js/script.js', __FILE__), array('jquery'), '2.2', true);
+        wp_enqueue_script('elinweb-agax-comment-script', plugins_url('assets/js/script.js', __FILE__), array('jquery'), ELINWEB_AGAX_COMMENT_VERSION, true);
 
         wp_localize_script('elinweb-agax-comment-script', 'elinwebAgaxComment', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
@@ -93,7 +103,9 @@ class Elinweb_Agax_Comment
     public function render_comments_list($atts)
     {
         $atts = shortcode_atts(array(
-            'items' => 5
+            'items' => 5,
+            'vote_icons' => array(),
+            'avatar_size' => self::DEFAULT_AVATAR_SIZE,
         ), $atts);
 
         $post_id = get_the_ID();
@@ -103,7 +115,7 @@ class Elinweb_Agax_Comment
 
         ob_start();
     ?>
-        <div class="dadsoo-comments-container" data-items="<?php echo esc_attr($atts['items']); ?>" data-post-id="<?php echo esc_attr($post_id); ?>">
+        <div class="dadsoo-comments-container" data-items="<?php echo esc_attr($atts['items']); ?>" data-post-id="<?php echo esc_attr($post_id); ?>" data-avatar-size="<?php echo esc_attr($this->sanitize_avatar_size($atts['avatar_size'])); ?>" data-vote-icons="<?php echo esc_attr(wp_json_encode($this->sanitize_vote_icons($atts['vote_icons']))); ?>">
             <div class="dadsoo-comments-list"></div>
             <button class="dadsoo-load-more" style="display:none;">بارگذاری نظرات بیشتر</button>
         </div>
@@ -111,8 +123,11 @@ class Elinweb_Agax_Comment
         return ob_get_clean();
     }
 
-    private function render_single_comment($comment, $depth = 0, $is_reply = false)
+    private function render_single_comment($comment, $depth = 0, $vote_icons = array(), $avatar_size = self::DEFAULT_AVATAR_SIZE)
     {
+        $depth = max(0, min(self::MAX_DEPTH, (int) $depth));
+        $avatar_size = $this->sanitize_avatar_size($avatar_size);
+        $can_reply = $depth < self::MAX_DEPTH;
         $likes = get_comment_meta($comment->comment_ID, 'elinweb_agax_likes', true) ?: 0;
         $dislikes = get_comment_meta($comment->comment_ID, 'elinweb_agax_dislikes', true) ?: 0;
         $user_vote = isset($_COOKIE['elinweb_agax_vote_' . $comment->comment_ID]) ? sanitize_key(wp_unslash($_COOKIE['elinweb_agax_vote_' . $comment->comment_ID])) : '';
@@ -126,7 +141,7 @@ class Elinweb_Agax_Comment
                 <header class="dadsoo-comment-header">
                     <div class="dadsoo-comment-author-info">
                         <div class="dadsoo-comment-avatar">
-                            <?php echo get_avatar($comment->comment_author_email, 42); ?>
+                            <?php echo get_avatar($comment->comment_author_email, $avatar_size); ?>
                         </div>
                         <span class="dadsoo-comment-author"><?php echo esc_html($comment->comment_author); ?></span>
                     </div>
@@ -134,23 +149,25 @@ class Elinweb_Agax_Comment
                 </header>
             <footer class="dadsoo-comment-footer">
                     <div class="dadsoo-comment-actions">
+                        <?php if ($can_reply): ?>
                         <button type="button" class="dadsoo-reply-btn"
                             data-comment-id="<?php echo $comment->comment_ID; ?>"
                             data-comment-unique="<?php echo $comment_unique_id; ?>">
                             پاسخ به نظر
                         </button>
+                        <?php endif; ?>
                         <button class="dadsoo-vote-btn <?php echo ($user_vote === 'like') ? 'active' : ''; ?>"
                             data-comment-id="<?php echo $comment->comment_ID; ?>"
                             data-vote="like"
                             aria-label="لایک">
-                            <span class="icon"></span>
+                            <?php echo $this->render_vote_icons('like', $vote_icons); ?>
                             <span class="dadsoo-like-count"><?php echo $likes; ?></span>
                         </button>
                         <button class="dadsoo-vote-btn <?php echo ($user_vote === 'dislike') ? 'active' : ''; ?>"
                             data-comment-id="<?php echo $comment->comment_ID; ?>"
                             data-vote="dislike"
                             aria-label="دیسلایک">
-                            <span class="icon"></span>
+                            <?php echo $this->render_vote_icons('dislike', $vote_icons); ?>
                             <span class="dadsoo-dislike-count"><?php echo $dislikes; ?></span>
                         </button>
                         
@@ -168,27 +185,153 @@ class Elinweb_Agax_Comment
 
                 
 
-                <div class="dadsoo-reply-form" id="reply-form-<?php echo $comment_unique_id; ?>" style="display:none;"></div>
-
-                <?php if (!$is_reply): ?>
-                    <div class="dadsoo-replies">
-                        <?php
-                        $replies = get_comments(array(
-                            'parent' => $comment->comment_ID,
-                            'status' => 'approve',
-                            'order' => 'ASC'
-                        ));
-
-                        foreach ($replies as $reply) {
-                            echo $this->render_single_comment($reply, $depth + 1, true);
-                        }
-                        ?>
-                    </div>
+                <?php if ($can_reply): ?>
+                    <div class="dadsoo-reply-form" id="reply-form-<?php echo $comment_unique_id; ?>" style="display:none;"></div>
                 <?php endif; ?>
+
+                <div class="dadsoo-replies">
+                    <?php
+                    // پاسخ‌ها همیشه رندر می‌شوند؛ فقط عمق برای استایل محدود می‌شود تا هیچ دیدگاه تأییدشده‌ای پنهان نماند.
+                    $replies = get_comments(array(
+                        'parent' => $comment->comment_ID,
+                        'status' => 'approve',
+                        'order' => 'ASC'
+                    ));
+
+                    foreach ($replies as $reply) {
+                        echo $this->render_single_comment($reply, $depth + 1, $vote_icons, $avatar_size);
+                    }
+                    ?>
+                </div>
             </article>
         </div>
     <?php
         return ob_get_clean();
+    }
+
+    private function sanitize_vote_icons($vote_icons)
+    {
+        if (is_string($vote_icons)) {
+            $vote_icons = json_decode($vote_icons, true);
+        }
+
+        if (!is_array($vote_icons)) {
+            return array();
+        }
+
+        $sanitized = array();
+        foreach (array('like_outline', 'like_fill', 'dislike_outline', 'dislike_fill') as $key) {
+            $value = isset($vote_icons[$key]['value']) ? $vote_icons[$key]['value'] : '';
+            $library = isset($vote_icons[$key]['library']) ? sanitize_key($vote_icons[$key]['library']) : '';
+            if (is_string($value) && preg_match('/^[a-zA-Z0-9_\-\s]+$/', $value)) {
+                $sanitized[$key] = array(
+                    'value' => $value,
+                    'library' => $library,
+                );
+            } elseif (is_array($value) && !empty($value['url'])) {
+                $url = esc_url_raw($value['url']);
+                if ($url) {
+                    $sanitized[$key] = array(
+                        'value' => array(
+                            'id' => isset($value['id']) ? absint($value['id']) : 0,
+                            'url' => $url,
+                        ),
+                        'library' => $library,
+                    );
+                }
+            }
+        }
+
+        return $sanitized;
+    }
+
+    private function render_vote_icons($vote_type, $vote_icons)
+    {
+        $vote_icons = $this->sanitize_vote_icons($vote_icons);
+        $outline_key = $vote_type . '_outline';
+        $fill_key = $vote_type . '_fill';
+
+        $outline = !empty($vote_icons[$outline_key]) ? $vote_icons[$outline_key] : null;
+        $fill = !empty($vote_icons[$fill_key]) ? $vote_icons[$fill_key] : null;
+
+        if (!$outline && !$fill) {
+            return '<span class="icon"></span>';
+        }
+
+        // اگر فقط یکی از دو حالت تنظیم شده باشد، همان آیکون برای هر دو حالت به کار می‌رود
+        // تا دکمه در حالت دیگر خالی نماند.
+        $outline = $outline ? $outline : $fill;
+        $fill = $fill ? $fill : $outline;
+
+        $output = '';
+        foreach (array('outline' => $outline, 'fill' => $fill) as $state => $icon) {
+            $output .= sprintf(
+                '<span class="icon elinweb-custom-vote-icon elinweb-vote-icon-%1$s">%2$s</span>',
+                esc_attr($state),
+                $this->render_elementor_icon($icon)
+            );
+        }
+
+        return $output;
+    }
+
+    private function sanitize_avatar_size($size)
+    {
+        $size = absint($size);
+
+        return $size >= 20 && $size <= 320 ? $size : self::DEFAULT_AVATAR_SIZE;
+    }
+
+    /**
+     * عمق یک دیدگاه را با دنبال‌کردن زنجیرهٔ والدها حساب می‌کند.
+     */
+    private function comment_depth($comment)
+    {
+        $depth = 0;
+        $parent_id = (int) $comment->comment_parent;
+
+        while ($parent_id > 0 && $depth < self::MAX_DEPTH) {
+            $parent = get_comment($parent_id);
+            if (!$parent) {
+                break;
+            }
+            $depth++;
+            $parent_id = (int) $parent->comment_parent;
+        }
+
+        return $depth;
+    }
+
+    /**
+     * IP و شناسهٔ مرورگر فرستنده را برای مدیریت و بررسی هرزنامه برمی‌گرداند.
+     */
+    private function request_meta()
+    {
+        $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
+        $agent = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
+
+        return array(
+            'comment_author_IP' => filter_var($ip, FILTER_VALIDATE_IP) ? $ip : '',
+            'comment_agent' => substr($agent, 0, 255),
+        );
+    }
+
+    private function render_elementor_icon($icon)
+    {
+        if (class_exists('\\Elementor\\Icons_Manager')) {
+            ob_start();
+            \Elementor\Icons_Manager::render_icon($icon, array('aria-hidden' => 'true'));
+            $icon_html = ob_get_clean();
+            if ($icon_html) {
+                return $icon_html;
+            }
+        }
+
+        if (is_array($icon['value'])) {
+            return sprintf('<img src="%s" alt="" aria-hidden="true">', esc_url($icon['value']['url']));
+        }
+
+        return sprintf('<i class="%s" aria-hidden="true"></i>', esc_attr($icon['value']));
     }
 
     public function submit_comment()
@@ -198,16 +341,21 @@ class Elinweb_Agax_Comment
             return;
         }
 
-        // دریافت تمام فیلدهای ارسالی برای دیباگ
-        //error_log('Received POST data: ' . print_r($_POST, true));
+        $name = isset($_POST['name']) ? trim(sanitize_text_field(wp_unslash($_POST['name']))) : '';
 
-        $name = isset($_POST['name']) ? trim(sanitize_text_field($_POST['name'])) : '';
-
-        // پیدا کردن خودکار فیلد نظر بدون توجه به نام آن
+        // فیلد نظر معمولاً «comment» است. اگر قالب نام دیگری داشت، اولین فیلد متنیِ
+        // خارج از فهرست فیلدهای شناخته‌شده استفاده می‌شود.
+        $reserved = array('name', 'email', 'post_id', 'action', 'elinweb_agax_nonce', '_wpnonce', '_wp_http_referer', 'vote_icons', 'avatar_size');
         $comment = '';
-        foreach ($_POST as $key => $value) {
-            if (!in_array($key, ['name', 'email', 'post_id', 'action', 'elinweb_agax_nonce'])) {
-                $comment = trim(wp_kses_post($value));
+
+        if (isset($_POST['comment']) && is_string($_POST['comment'])) {
+            $comment = trim(wp_kses_post(wp_unslash($_POST['comment'])));
+        } else {
+            foreach ($_POST as $key => $value) {
+                if (in_array($key, $reserved, true) || !is_string($value)) {
+                    continue;
+                }
+                $comment = trim(wp_kses_post(wp_unslash($value)));
                 break;
             }
         }
@@ -215,12 +363,12 @@ class Elinweb_Agax_Comment
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
 
         // اعتبارسنجی پیشرفته
-        if (empty($name) || wp_strlen($name) < 2) {
+        if (empty($name) || $this->string_length($name) < 2) {
             wp_send_json_error('نام باید حداقل ۲ کاراکتر داشته باشد');
             return;
         }
 
-        if (empty($comment) || wp_strlen($comment) < 5) {
+        if (empty($comment) || $this->string_length($comment) < 5) {
             wp_send_json_error('نظر باید حداقل ۵ کاراکتر داشته باشد');
             return;
         }
@@ -236,21 +384,32 @@ class Elinweb_Agax_Comment
         }
 
         // پردازش موفقیت‌آمیز
-        $comment_data = [
+        $user_id = get_current_user_id();
+        $is_moderator = $user_id && user_can($user_id, 'moderate_comments');
+        $comment_data = array_merge(array(
             'comment_post_ID' => $post_id,
             'comment_author' => $name,
             'comment_content' => $comment,
-            'comment_approved' => 0,
-        ];
+            'user_id' => $user_id,
+            'comment_approved' => $is_moderator ? 1 : 0,
+        ), $this->request_meta());
 
-        if (!empty($_POST['email']) && is_email($_POST['email'])) {
-            $comment_data['comment_author_email'] = sanitize_email($_POST['email']);
+        $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
+        if ($email && is_email($email)) {
+            $comment_data['comment_author_email'] = $email;
         }
 
         $comment_id = wp_insert_comment(wp_slash($comment_data));
 
         if ($comment_id) {
-            wp_send_json_success('نظر با موفقیت ثبت شد');
+            $vote_icons = isset($_POST['vote_icons']) ? $this->sanitize_vote_icons(wp_unslash($_POST['vote_icons'])) : array();
+            $avatar_size = isset($_POST['avatar_size']) ? $this->sanitize_avatar_size($_POST['avatar_size']) : self::DEFAULT_AVATAR_SIZE;
+
+            wp_send_json_success(array(
+                'approved' => (bool) $is_moderator,
+                'message' => $is_moderator ? 'نظر شما ثبت و منتشر شد.' : 'نظر شما ثبت شد و پس از تأیید نمایش داده می‌شود.',
+                'html' => $is_moderator ? $this->render_single_comment(get_comment($comment_id), 0, $vote_icons, $avatar_size) : '',
+            ));
         } else {
             wp_send_json_error('خطا در ثبت نظر');
         }
@@ -281,9 +440,12 @@ class Elinweb_Agax_Comment
         $comments = get_comments($args);
         $output = '';
 
+        $vote_icons = isset($_POST['vote_icons']) ? $this->sanitize_vote_icons(wp_unslash($_POST['vote_icons'])) : array();
+        $avatar_size = isset($_POST['avatar_size']) ? $this->sanitize_avatar_size($_POST['avatar_size']) : self::DEFAULT_AVATAR_SIZE;
+
         if (!empty($comments)) {
             foreach ($comments as $comment) {
-                $output .= $this->render_single_comment($comment);
+                $output .= $this->render_single_comment($comment, 0, $vote_icons, $avatar_size);
             }
         }
 
@@ -360,10 +522,10 @@ class Elinweb_Agax_Comment
     {
         check_ajax_referer('elinweb-agax-comment-nonce', '_wpnonce');
 
-        $parent_id = intval($_POST['parent_id']);
-        $name = isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '';
-        $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
-        $comment = isset($_POST['comment']) ? wp_kses_post($_POST['comment']) : '';
+        $parent_id = isset($_POST['parent_id']) ? intval($_POST['parent_id']) : 0;
+        $name = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
+        $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
+        $comment = isset($_POST['comment']) ? wp_kses_post(wp_unslash($_POST['comment'])) : '';
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
 
         if (empty(trim($name)) || empty(trim($comment))) {
@@ -382,6 +544,12 @@ class Elinweb_Agax_Comment
             return;
         }
 
+        // پاسخ عمیق‌تر از حد مجاز پذیرفته نمی‌شود، چون در فهرست قابل نمایش نیست.
+        if ($this->comment_depth($parent_comment) + 1 > self::MAX_DEPTH) {
+            wp_send_json_error('امکان پاسخ در این سطح وجود ندارد.', 400);
+            return;
+        }
+
         $comment = wp_kses(
             $comment,
             array(
@@ -393,22 +561,31 @@ class Elinweb_Agax_Comment
             )
         );
 
-        $comment_data = array(
+        $user_id = get_current_user_id();
+        $is_moderator = $user_id && user_can($user_id, 'moderate_comments');
+        $comment_data = array_merge(array(
             'comment_post_ID' => $post_id,
             'comment_author' => $name,
             'comment_author_email' => $email,
             'comment_content' => $comment,
             'comment_type' => '',
             'comment_parent' => $parent_id,
-            'user_id' => get_current_user_id(),
-            'comment_approved' => 0,
-        );
+            'user_id' => $user_id,
+            'comment_approved' => $is_moderator ? 1 : 0,
+        ), $this->request_meta());
 
         $comment_id = wp_insert_comment(wp_slash($comment_data));
 
         if ($comment_id) {
             $reply = get_comment($comment_id);
-            wp_send_json_success($this->render_single_comment($reply));
+            $vote_icons = isset($_POST['vote_icons']) ? $this->sanitize_vote_icons(wp_unslash($_POST['vote_icons'])) : array();
+            $avatar_size = isset($_POST['avatar_size']) ? $this->sanitize_avatar_size($_POST['avatar_size']) : self::DEFAULT_AVATAR_SIZE;
+
+            wp_send_json_success(array(
+                'approved' => (bool) $is_moderator,
+                'message' => $is_moderator ? 'پاسخ شما ثبت و منتشر شد.' : 'پاسخ شما ثبت شد و پس از تأیید نمایش داده می‌شود.',
+                'html' => $is_moderator ? $this->render_single_comment($reply, $this->comment_depth($reply), $vote_icons, $avatar_size) : '',
+            ));
         } else {
             wp_send_json_error('خطا در ثبت پاسخ. لطفا مجددا تلاش کنید.');
         }
@@ -424,6 +601,24 @@ class Elinweb_Agax_Comment
             'elin-agax-comment-settings',
             array($this, 'render_settings_page')
         );
+    }
+
+    private function string_length($value)
+    {
+        return function_exists('mb_strlen') ? mb_strlen($value, 'UTF-8') : strlen($value);
+    }
+
+    public function register_elementor_widgets($widgets_manager)
+    {
+        if (!class_exists('\\Elementor\\Widget_Base')) {
+            return;
+        }
+
+        require_once plugin_dir_path(__FILE__) . 'includes/class-elinweb-agax-elementor-form-widget.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/class-elinweb-agax-elementor-comments-widget.php';
+
+        $widgets_manager->register(new Elinweb_Agax_Elementor_Form_Widget());
+        $widgets_manager->register(new Elinweb_Agax_Elementor_Comments_Widget());
     }
 
     public function render_settings_page()
@@ -456,4 +651,14 @@ class Elinweb_Agax_Comment
     }
 }
 
-new Elinweb_Agax_Comment();
+function elinweb_agax_comment()
+{
+    static $plugin = null;
+    if (null === $plugin) {
+        $plugin = new Elinweb_Agax_Comment();
+    }
+
+    return $plugin;
+}
+
+elinweb_agax_comment();

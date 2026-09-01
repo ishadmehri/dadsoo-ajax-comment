@@ -1,8 +1,26 @@
 jQuery(document).ready(function ($) {
+    // نزدیک‌ترین فهرست نظرات به یک عنصر؛ اگر فرم بیرون از فهرست باشد اولین فهرست صفحه استفاده می‌شود.
+    function commentsContainerFor($el) {
+        var $container = $el.closest('.dadsoo-comments-container');
+
+        return $container.length ? $container : $('.dadsoo-comments-container').first();
+    }
+
+    function showMessage($box, type, text) {
+        $box.removeClass('success error').addClass(type).html(text);
+    }
+
+    // فقط فهرست پاسخ‌های خودِ همین کامنت، نه پاسخ‌های تو در توی پایین‌تر.
+    function ownRepliesContainer($comment) {
+        return $comment.children('.dadsoo-comment-body').children('.dadsoo-replies').first();
+    }
+
     // ارسال فرم کامنت اصلی
-    $('#dadsoo-comment-form').on('submit', function (e) {
+    $(document).on('submit', '#dadsoo-comment-form', function (e) {
         e.preventDefault();
         var $form = $(this);
+        var $message = $form.find('.dadsoo-message');
+        var $container = commentsContainerFor($form);
 
         // جمع‌آوری تمام داده‌های فرم به صورت داینامیک
         var formData = {};
@@ -13,7 +31,10 @@ jQuery(document).ready(function ($) {
         });
         formData.action = 'elinweb_agax_submit_comment';
 
-        //console.log('Form data to send:', formData); // برای دیباگ
+        if ($container.length) {
+            formData.vote_icons = $container.attr('data-vote-icons') || '';
+            formData.avatar_size = $container.attr('data-avatar-size') || '';
+        }
 
         $.ajax({
             url: elinwebAgaxComment.ajaxurl,
@@ -21,18 +42,25 @@ jQuery(document).ready(function ($) {
             data: formData,
             beforeSend: function () {
                 $form.find('button').prop('disabled', true);
+                $message.removeClass('success error').html('');
             },
             success: function (response) {
                 if (response.success) {
-                    alert('نظر شما ثبت شد!');
+                    var data = response.data || {};
+                    showMessage($message, 'success', data.message || 'نظر شما ثبت شد.');
                     $form[0].reset();
+
+                    // نظر مدیر بدون نیاز به تأیید منتشر می‌شود، پس بدون بارگذاری دوباره نمایش داده می‌شود.
+                    if (data.approved && data.html) {
+                        $container.find('.dadsoo-comments-list').first().prepend(data.html);
+                    }
                 } else {
-                    alert('خطا: ' + response.data);
+                    showMessage($message, 'error', response.data || 'خطا در ثبت نظر.');
                 }
             },
             error: function (xhr) {
                 console.error('AJAX Error:', xhr.responseText);
-                alert('خطای سرور: ' + xhr.statusText);
+                showMessage($message, 'error', 'خطای سرور: ' + xhr.statusText);
             },
             complete: function () {
                 $form.find('button').prop('disabled', false);
@@ -47,6 +75,8 @@ jQuery(document).ready(function ($) {
         var $loadMore = $container.find('.dadsoo-load-more');
         var itemsPerPage = parseInt($container.data('items'));
         var postId = $container.data('post-id');
+        var voteIcons = $container.attr('data-vote-icons') || '';
+        var avatarSize = $container.attr('data-avatar-size') || '';
         var offset = 0;
 
         function loadComments() {
@@ -58,6 +88,8 @@ jQuery(document).ready(function ($) {
                     post_id: postId,
                     offset: offset,
                     items: itemsPerPage,
+                    vote_icons: voteIcons,
+                    avatar_size: avatarSize,
                     _wpnonce: elinwebAgaxComment.nonce
                 },
                 beforeSend: function () {
@@ -177,6 +209,9 @@ jQuery(document).ready(function ($) {
         var commentUnique = $button.data('comment-unique'); // این خط اضافه شد
         var $replyForm = $('#reply-form-' + commentUnique); // این خط تغییر کرد
 
+        // شناسهٔ پست از خود فهرست نظرات خوانده می‌شود؛ فرم ارسال نظر ممکن است در صفحه نباشد.
+        var postId = commentsContainerFor($button).attr('data-post-id') || $('input[name="post_id"]').first().val() || '';
+
         if ($replyForm.is(':visible')) {
             $replyForm.slideUp(300);
             return;
@@ -199,7 +234,7 @@ jQuery(document).ready(function ($) {
                 <textarea class="dadsoo-comment-textarea" name="comment" rows="3" required></textarea>
             </div>
             <input type="hidden" name="parent_id" value="${commentId}">
-            <input type="hidden" name="post_id" value="${$('input[name="post_id"]').val()}">
+            <input type="hidden" name="post_id" value="${postId}">
             <input type="hidden" name="action" value="elinweb_agax_reply_comment">
             <button type="submit" class="dadsoo-submit-btn">ارسال پاسخ</button>
             <button type="button" class="dadsoo-cancel-reply-btn">انصراف</button>
@@ -221,8 +256,11 @@ jQuery(document).ready(function ($) {
         var $message = $form.find('.dadsoo-message');
         var $replyForm = $form.closest('.dadsoo-reply-form');
         var $commentContainer = $form.closest('.dadsoo-comment');
-        var $repliesContainer = $commentContainer.find('.dadsoo-replies');
+        var $repliesContainer = ownRepliesContainer($commentContainer);
         var replyComment = $form.find('.dadsoo-comment-textarea').val();
+        var $listContainer = commentsContainerFor($commentContainer);
+        var voteIcons = $listContainer.attr('data-vote-icons') || '';
+        var avatarSize = $listContainer.attr('data-avatar-size') || '';
 
         $message.removeClass('success error').html('');
 
@@ -237,6 +275,8 @@ jQuery(document).ready(function ($) {
                 name: $form.find('input[name="name"]').val(),
                 email: $form.find('input[name="email"]').val(),
                 comment: replyComment, // استفاده از متغیری که تعریف کردیم
+                vote_icons: voteIcons,
+                avatar_size: avatarSize,
                 _wpnonce: elinwebAgaxComment.nonce
             },
             beforeSend: function () {
@@ -244,17 +284,23 @@ jQuery(document).ready(function ($) {
             },
             success: function (response) {
                 if (response.success) {
-                    $message.addClass('success').html('پاسخ شما با موفقیت ثبت شد.');
+                    var data = response.data || {};
+                    showMessage($message, 'success', data.message || 'پاسخ شما ثبت شد.');
 
-                    if ($repliesContainer.length === 0) {
-                        $repliesContainer = $('<div class="dadsoo-replies"></div>');
-                        $commentContainer.append($repliesContainer);
+                    // پاسخ تأییدنشده نمایش داده نمی‌شود تا کاربر آن را منتشرشده نپندارد.
+                    if (data.approved && data.html) {
+                        if ($repliesContainer.length === 0) {
+                            $repliesContainer = $('<div class="dadsoo-replies"></div>');
+                            $commentContainer.children('.dadsoo-comment-body').append($repliesContainer);
+                        }
+
+                        $repliesContainer.append(data.html);
+                        $replyForm.slideUp(300);
+                    } else {
+                        $form.find('input[name="name"], input[name="email"], textarea').val('');
                     }
-
-                    $repliesContainer.append(response.data);
-                    $replyForm.slideUp(300);
                 } else {
-                    $message.addClass('error').html(response.data);
+                    showMessage($message, 'error', response.data || 'خطا در ثبت پاسخ.');
                 }
             },
             error: function () {
