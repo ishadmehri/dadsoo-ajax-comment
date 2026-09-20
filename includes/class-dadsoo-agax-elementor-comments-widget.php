@@ -49,12 +49,12 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
     protected function register_controls()
     {
         $this->start_controls_section('content_section', array(
-            'label' => __('تنظیمات فهرست', 'dadsoo-agax-comment'),
+            'label' => __('List Settings', 'dadsoo-agax-comment'),
             'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
         ));
 
         $this->add_control('items', array(
-            'label' => __('تعداد نظرات در بارگذاری اولیه', 'dadsoo-agax-comment'),
+            'label' => __('Comments per initial load', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::NUMBER,
             'default' => 5,
             'min' => 1,
@@ -62,50 +62,50 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
         ));
 
         $this->add_control('load_more_text', array(
-            'label' => __('متن دکمهٔ بارگذاری بیشتر', 'dadsoo-agax-comment'),
+            'label' => __('Load more button text', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::TEXT,
-            'default' => __('بارگذاری نظرات بیشتر', 'dadsoo-agax-comment'),
+            'default' => __('Load more comments', 'dadsoo-agax-comment'),
             'label_block' => true,
         ));
 
         $this->add_control('loading_text', array(
-            'label' => __('متن حالت بارگذاری', 'dadsoo-agax-comment'),
+            'label' => __('Loading state text', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::TEXT,
-            'default' => __('در حال بارگذاری نظرات…', 'dadsoo-agax-comment'),
+            'default' => __('Loading comments…', 'dadsoo-agax-comment'),
             'label_block' => true,
         ));
 
         $this->add_control('empty_text', array(
-            'label' => __('متن وقتی هیچ نظری نیست', 'dadsoo-agax-comment'),
+            'label' => __('Empty state text', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::TEXT,
-            'default' => __('هنوز نظری ثبت نشده است.', 'dadsoo-agax-comment'),
+            'default' => __('No comments yet.', 'dadsoo-agax-comment'),
             'label_block' => true,
         ));
 
         $this->end_controls_section();
 
         $this->start_controls_section('icons_section', array(
-            'label' => __('آیکون‌های رأی', 'dadsoo-agax-comment'),
+            'label' => __('Vote Icons', 'dadsoo-agax-comment'),
             'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
         ));
 
         $this->add_control('like_outline_icon', array(
-            'label' => __('لایک، حالت غیرفعال', 'dadsoo-agax-comment'),
+            'label' => __('Like, inactive state', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::ICONS,
             'default' => array('value' => 'far fa-thumbs-up', 'library' => 'fa-regular'),
         ));
         $this->add_control('like_fill_icon', array(
-            'label' => __('لایک، حالت فعال', 'dadsoo-agax-comment'),
+            'label' => __('Like, active state', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::ICONS,
             'default' => array('value' => 'fas fa-thumbs-up', 'library' => 'fa-solid'),
         ));
         $this->add_control('dislike_outline_icon', array(
-            'label' => __('دیسلایک، حالت غیرفعال', 'dadsoo-agax-comment'),
+            'label' => __('Dislike, inactive state', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::ICONS,
             'default' => array('value' => 'far fa-thumbs-down', 'library' => 'fa-regular'),
         ));
         $this->add_control('dislike_fill_icon', array(
-            'label' => __('دیسلایک، حالت فعال', 'dadsoo-agax-comment'),
+            'label' => __('Dislike, active state', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::ICONS,
             'default' => array('value' => 'fas fa-thumbs-down', 'library' => 'fa-solid'),
         ));
@@ -113,23 +113,23 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
         $this->end_controls_section();
 
         $this->start_controls_section('author_style_section', array(
-            'label' => __('نویسنده', 'dadsoo-agax-comment'),
+            'label' => __('Author', 'dadsoo-agax-comment'),
             'tab' => \Elementor\Controls_Manager::TAB_STYLE,
         ));
         $this->add_responsive_control('avatar_size', array(
-            'label' => __('اندازه تصویر نویسنده', 'dadsoo-agax-comment'),
+            'label' => __('Avatar size', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::SLIDER,
             'range' => array('px' => array('min' => 20, 'max' => 160)),
             'selectors' => array('{{WRAPPER}} .dadsoo-comment-avatar' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};'),
         ));
         $this->add_responsive_control('avatar_radius', array(
-            'label' => __('گردی تصویر نویسنده', 'dadsoo-agax-comment'),
+            'label' => __('Avatar border radius', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::DIMENSIONS,
             'size_units' => array('px', '%'),
             'selectors' => array('{{WRAPPER}} .dadsoo-comment-avatar' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};'),
         ));
         $this->add_control('author_name_color', array(
-            'label' => __('رنگ نام نویسنده', 'dadsoo-agax-comment'),
+            'label' => __('Author name color', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::COLOR,
             'selectors' => array('{{WRAPPER}} .dadsoo-comment-author' => 'color: {{VALUE}};'),
         ));
@@ -140,11 +140,11 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
         $this->end_controls_section();
 
         $this->start_controls_section('comment_style_section', array(
-            'label' => __('متن نظر', 'dadsoo-agax-comment'),
+            'label' => __('Comment Text', 'dadsoo-agax-comment'),
             'tab' => \Elementor\Controls_Manager::TAB_STYLE,
         ));
         $this->add_control('comment_text_color', array(
-            'label' => __('رنگ متن', 'dadsoo-agax-comment'),
+            'label' => __('Text color', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::COLOR,
             'selectors' => array('{{WRAPPER}} .dadsoo-comment-text' => 'color: {{VALUE}};'),
         ));
@@ -154,8 +154,8 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
         ));
         $this->end_controls_section();
 
-        $this->register_vote_style_controls('like', __('لایک', 'dadsoo-agax-comment'));
-        $this->register_vote_style_controls('dislike', __('دیسلایک', 'dadsoo-agax-comment'));
+        $this->register_vote_style_controls('like', __('Like', 'dadsoo-agax-comment'));
+        $this->register_vote_style_controls('dislike', __('Dislike', 'dadsoo-agax-comment'));
         $this->register_loading_style_controls();
     }
 
@@ -165,7 +165,7 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
     private function register_loading_style_controls()
     {
         $this->start_controls_section('loading_style_section', array(
-            'label' => __('بارگذاری بیشتر', 'dadsoo-agax-comment'),
+            'label' => __('Load More', 'dadsoo-agax-comment'),
             'tab' => \Elementor\Controls_Manager::TAB_STYLE,
         ));
 
@@ -176,27 +176,27 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
 
         $this->start_controls_tabs('load_more_state_tabs');
 
-        $this->start_controls_tab('load_more_normal_tab', array('label' => __('عادی', 'dadsoo-agax-comment')));
+        $this->start_controls_tab('load_more_normal_tab', array('label' => __('Normal', 'dadsoo-agax-comment')));
         $this->add_control('load_more_color', array(
-            'label' => __('رنگ متن', 'dadsoo-agax-comment'),
+            'label' => __('Text color', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::COLOR,
             'selectors' => array('{{WRAPPER}} .dadsoo-load-more' => 'color: {{VALUE}};'),
         ));
         $this->add_control('load_more_background', array(
-            'label' => __('رنگ پس‌زمینه', 'dadsoo-agax-comment'),
+            'label' => __('Background color', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::COLOR,
             'selectors' => array('{{WRAPPER}} .dadsoo-load-more' => 'background-color: {{VALUE}};'),
         ));
         $this->end_controls_tab();
 
-        $this->start_controls_tab('load_more_hover_tab', array('label' => __('هاور', 'dadsoo-agax-comment')));
+        $this->start_controls_tab('load_more_hover_tab', array('label' => __('Hover', 'dadsoo-agax-comment')));
         $this->add_control('load_more_color_hover', array(
-            'label' => __('رنگ متن', 'dadsoo-agax-comment'),
+            'label' => __('Text color', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::COLOR,
             'selectors' => array('{{WRAPPER}} .dadsoo-load-more:hover' => 'color: {{VALUE}};'),
         ));
         $this->add_control('load_more_background_hover', array(
-            'label' => __('رنگ پس‌زمینه', 'dadsoo-agax-comment'),
+            'label' => __('Background color', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::COLOR,
             'selectors' => array('{{WRAPPER}} .dadsoo-load-more:hover' => 'background-color: {{VALUE}};'),
         ));
@@ -211,7 +211,7 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
         ));
 
         $this->add_responsive_control('load_more_padding', array(
-            'label' => __('فاصلهٔ داخلی', 'dadsoo-agax-comment'),
+            'label' => __('Padding', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::DIMENSIONS,
             'size_units' => array('px', 'em', '%'),
             'selectors' => array(
@@ -220,7 +220,7 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
         ));
 
         $this->add_responsive_control('load_more_border_radius', array(
-            'label' => __('گردی گوشه‌ها', 'dadsoo-agax-comment'),
+            'label' => __('Border radius', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::DIMENSIONS,
             'size_units' => array('px', '%'),
             'selectors' => array(
@@ -229,13 +229,13 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
         ));
 
         $this->add_control('status_heading', array(
-            'label' => __('پیام بارگذاری و حالت خالی', 'dadsoo-agax-comment'),
+            'label' => __('Loading & empty state message', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::HEADING,
             'separator' => 'before',
         ));
 
         $this->add_control('status_color', array(
-            'label' => __('رنگ متن و چرخانه', 'dadsoo-agax-comment'),
+            'label' => __('Text & spinner color', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::COLOR,
             'selectors' => array('{{WRAPPER}} .dadsoo-comments-status' => 'color: {{VALUE}};'),
         ));
@@ -246,13 +246,13 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
         ));
 
         $this->add_control('flash_heading', array(
-            'label' => __('نشانهٔ نظرات تازه‌بارگذاری‌شده', 'dadsoo-agax-comment'),
+            'label' => __('New comments indicator', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::HEADING,
             'separator' => 'before',
         ));
 
         $this->add_control('flash_color', array(
-            'label' => __('رنگ فلَش', 'dadsoo-agax-comment'),
+            'label' => __('Flash color', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::COLOR,
             'default' => '',
             'selectors' => array('{{WRAPPER}}' => '--dadsoo-flash-color: {{VALUE}};'),
@@ -260,7 +260,7 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
 
         // اگر قالب هدر چسبان دارد، بالای نظر زیر هدر پنهان می‌شود؛ این مقدار آن را جبران می‌کند.
         $this->add_control('scroll_offset', array(
-            'label' => __('فاصله از بالا هنگام اسکرول', 'dadsoo-agax-comment'),
+            'label' => __('Scroll offset from top', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::SLIDER,
             'size_units' => array('px'),
             'range' => array('px' => array('min' => 0, 'max' => 300)),
@@ -275,13 +275,13 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
     {
         $this->start_controls_section($vote . '_style_section', array(
             /* translators: %s: like or dislike. */
-            'label' => sprintf(__('دکمه %s', 'dadsoo-agax-comment'), $label),
+            'label' => sprintf(__('%s Button', 'dadsoo-agax-comment'), $label),
             'tab' => \Elementor\Controls_Manager::TAB_STYLE,
         ));
 
         // بدون فاصلهٔ داخلی، رنگ پس‌زمینه و کادر به آیکون و شمارنده می‌چسبند.
         $this->add_responsive_control($vote . '_padding', array(
-            'label' => __('فاصلهٔ داخلی', 'dadsoo-agax-comment'),
+            'label' => __('Padding', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::DIMENSIONS,
             'size_units' => array('px', 'em', '%'),
             'default' => array('top' => '6', 'right' => '10', 'bottom' => '6', 'left' => '10', 'unit' => 'px', 'isLinked' => false),
@@ -291,7 +291,7 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
         ));
 
         $this->add_responsive_control($vote . '_border_radius', array(
-            'label' => __('گردی گوشه‌ها', 'dadsoo-agax-comment'),
+            'label' => __('Border radius', 'dadsoo-agax-comment'),
             'type' => \Elementor\Controls_Manager::DIMENSIONS,
             'size_units' => array('px', '%'),
             'selectors' => array(
@@ -300,17 +300,17 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
         ));
 
         $this->start_controls_tabs($vote . '_state_tabs');
-        foreach (array('outline' => __('حالت غیرفعال (Outline)', 'dadsoo-agax-comment'), 'fill' => __('حالت فعال (Fill)', 'dadsoo-agax-comment')) as $state => $state_label) {
+        foreach (array('outline' => __('Inactive (Outline)', 'dadsoo-agax-comment'), 'fill' => __('Active (Fill)', 'dadsoo-agax-comment')) as $state => $state_label) {
             $is_active = 'fill' === $state;
             $selector = '{{WRAPPER}} .dadsoo-vote-btn[data-vote="' . $vote . '"]' . ($is_active ? '.active' : ':not(.active)');
             $this->start_controls_tab($vote . '_' . $state . '_tab', array('label' => $state_label));
             $this->add_control($vote . '_' . $state . '_icon_color', array(
-                'label' => __('رنگ آیکون', 'dadsoo-agax-comment'),
+                'label' => __('Icon color', 'dadsoo-agax-comment'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => array($selector . ' .icon' => 'color: {{VALUE}};'),
             ));
             $this->add_control($vote . '_' . $state . '_background_color', array(
-                'label' => __('رنگ پس‌زمینه', 'dadsoo-agax-comment'),
+                'label' => __('Background color', 'dadsoo-agax-comment'),
                 'type' => \Elementor\Controls_Manager::COLOR,
                 'selectors' => array($selector => 'background-color: {{VALUE}};'),
             ));
@@ -345,13 +345,16 @@ class Dadsoo_Agax_Elementor_Comments_Widget extends \Elementor\Widget_Base
             $avatar_size = (int) $avatar_setting['size'];
         }
 
-        echo dadsoo_agax_comment()->render_comments_list(array(
+        $list_args = array(
             'items' => max(1, min(100, absint($settings['items']))),
             'vote_icons' => $vote_icons,
             'avatar_size' => $avatar_size,
             'load_more_text' => isset($settings['load_more_text']) ? $settings['load_more_text'] : '',
             'loading_text' => isset($settings['loading_text']) ? $settings['loading_text'] : '',
             'empty_text' => isset($settings['empty_text']) ? $settings['empty_text'] : '',
-        )); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        );
+
+        // render_comments_list() تمام مقادیر را داخل خودش با esc_attr/esc_html/wp_json_encode چاپ می‌کند.
+        echo dadsoo_agax_comment()->render_comments_list($list_args); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     }
 }

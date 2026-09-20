@@ -106,6 +106,23 @@ wp eval-file tests/integration-smoke.php --path=<wordpress-path>
 
 فایل اصلی افزونه `dadsoo-agax-comment.php` است. استایل‌ها و رفتار سمت مرورگر به‌ترتیب در `assets/css/style.css` و `assets/js/script.js` قرار دارند. توسعه و نگهداری پروژه توسط [Elinweb](https://elinweb.ir) انجام می‌شود.
 
-## انتشار
+## زبان و ترجمه
 
-مجوز انتشار هنوز تعیین نشده است. پیش از عمومی‌کردن مخزن، یک مجوز مناسب انتخاب و فایل `LICENSE` را اضافه کنید.
+از نسخهٔ ۳٫۲٫۰، رشته‌های مبدأ افزونه (داخل `__()`/`_e()`) انگلیسی‌اند تا با قواعد مخزن وردپرس هم‌خوان باشند. ترجمهٔ کامل فارسی در `languages/dadsoo-agax-comment-fa_IR.po` و `.mo` قرار دارد و روی سایت‌هایی که locale آن‌ها `fa_IR` است (مثل خودِ dadsoo.com) به‌صورت خودکار بارگذاری می‌شود؛ ظاهر افزونه برای کاربر نهایی هیچ تغییری نمی‌کند. فایل `languages/dadsoo-agax-comment.pot` هم برای ساخت ترجمه‌های دیگر زبان‌ها آماده است.
+
+برای به‌روزرسانی ترجمهٔ فارسی پس از تغییر متن‌ها:
+
+```text
+wp i18n make-pot . languages/dadsoo-agax-comment.pot --domain=dadsoo-agax-comment --exclude=tests,languages
+wp i18n make-mo languages/dadsoo-agax-comment-fa_IR.po languages/
+```
+
+## انتشار در مخزن وردپرس
+
+فایل `readme.txt` (فرمت استاندارد مخزن وردپرس، به انگلیسی) در ریشهٔ افزونه آماده است. پیش از ارسال:
+
+1. مقدار `Contributors` در `readme.txt` را با نام کاربری واقعی حساب wordpress.org جایگزین کنید (اکنون `ishadmehri` است، فقط یک پیش‌فرض).
+2. افزونهٔ رسمی [Plugin Check](https://wordpress.org/plugins/plugin-check/) را روی نسخهٔ نهایی اجرا کنید؛ در زمان نگارش این سند، تنها دو هشدار کم‌اهمیت باقی مانده‌اند (فایل `.gitignore` که در بستهٔ نهایی نیست، و فراخوانی عمدی `load_plugin_textdomain()` برای پشتیبانی از نصب خارج از مخزن وردپرس).
+3. زیپ نهایی را بدون `tests/`، `.git`، `.gitignore` و سایر فایل‌های پنهان از <https://wordpress.org/plugins/developers/add/> ارسال کنید.
+
+مجوز انتشار GPL v2 یا بالاتر است (فیلدهای `License`/`License URI` در سرتیتر افزونه و در `readme.txt`).

@@ -145,8 +145,10 @@ $blank = dadsoo_agax_comment()->render_comments_list(array(
     'load_more_text' => '   ',
     'empty_text' => '',
 ));
-$results['blank_label_falls_back'] = false !== strpos($blank, 'بارگذاری نظرات بیشتر')
-    && false !== strpos($blank, 'هنوز نظری ثبت نشده است.');
+// از خودِ __() برای مقایسه استفاده می‌شود تا تست مستقل از locale سایت باشد؛
+// این سایت آزمایشی fa_IR است و ترجمهٔ بسته‌شده با افزونه همین‌جا هم اعمال می‌شود.
+$results['blank_label_falls_back'] = false !== strpos($blank, __('Load more comments', 'dadsoo-agax-comment'))
+    && false !== strpos($blank, __('No comments yet.', 'dadsoo-agax-comment'));
 
 // The loading indicator and its spinner must be in the initial markup, because the
 // list itself only arrives over AJAX.

@@ -2,21 +2,23 @@
 /*
 Plugin Name: Dadsoo Agax Comment
 Plugin URI: https://elinweb.ir
-Description: سیستم کامنت‌گذاری پیشرفته Dadsoo با پاسخ‌های تو در تو و مدیریت کامل
-Version: 3.1.0
-Author: ایمان شادمهری
+Description: Advanced AJAX comment system with threaded replies, like/dislike voting, and full moderation control.
+Version: 3.2.0
+Author: Iman Shadmehri
 Author URI: https://elinweb.ir
 Requires at least: 5.8
 Requires PHP: 7.4
 Text Domain: dadsoo-agax-comment
 Domain Path: /languages
+License: GPL v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-define('DADSOO_AGAX_COMMENT_VERSION', '3.1.0');
+define('DADSOO_AGAX_COMMENT_VERSION', '3.2.0');
 define('DADSOO_AGAX_COMMENT_FILE', __FILE__);
 
 class Dadsoo_Agax_Comment
@@ -87,10 +89,13 @@ class Dadsoo_Agax_Comment
 
         $renamed = 0;
         foreach (array('elinweb_agax_likes' => self::META_LIKES, 'elinweb_agax_dislikes' => self::META_DISLIKES) as $old => $new) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- one-time bulk meta-key rename; no core API renames a meta key across all rows.
             $renamed += (int) $wpdb->update($wpdb->commentmeta, array('meta_key' => $new), array('meta_key' => $old));
         }
 
-        if ($renamed && function_exists('wp_cache_supports') && wp_cache_supports('flush_group')) {
+        // wp_cache_flush_group() و wp_cache_supports() هر دو از وردپرس ۶.۱ اضافه شده‌اند؛
+        // بررسی وجود خودِ تابع (نه فقط wp_cache_supports) روی نسخه‌های قدیمی‌تر ایمن است.
+        if ($renamed && function_exists('wp_cache_flush_group') && function_exists('wp_cache_supports') && wp_cache_supports('flush_group')) {
             wp_cache_flush_group('comment_meta');
         }
 
@@ -124,16 +129,16 @@ class Dadsoo_Agax_Comment
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce(self::NONCE_ACTION),
             'i18n' => array(
-                'commentSaved' => __('نظر شما ثبت شد.', 'dadsoo-agax-comment'),
-                'commentFailed' => __('خطا در ثبت نظر.', 'dadsoo-agax-comment'),
-                'replySaved' => __('پاسخ شما ثبت شد.', 'dadsoo-agax-comment'),
-                'replyFailed' => __('خطا در ثبت پاسخ.', 'dadsoo-agax-comment'),
-                'serverError' => __('خطا در ارتباط با سرور. لطفاً مجدداً تلاش کنید.', 'dadsoo-agax-comment'),
-                'name' => __('نام و نام خانوادگی', 'dadsoo-agax-comment'),
-                'email' => __('ایمیل', 'dadsoo-agax-comment'),
-                'reply' => __('پاسخ شما', 'dadsoo-agax-comment'),
-                'send' => __('ارسال پاسخ', 'dadsoo-agax-comment'),
-                'cancel' => __('انصراف', 'dadsoo-agax-comment'),
+                'commentSaved' => __('Your comment has been saved.', 'dadsoo-agax-comment'),
+                'commentFailed' => __('There was an error saving your comment.', 'dadsoo-agax-comment'),
+                'replySaved' => __('Your reply has been saved.', 'dadsoo-agax-comment'),
+                'replyFailed' => __('There was an error saving your reply.', 'dadsoo-agax-comment'),
+                'serverError' => __('A server error occurred. Please try again.', 'dadsoo-agax-comment'),
+                'name' => __('Full name', 'dadsoo-agax-comment'),
+                'email' => __('Email', 'dadsoo-agax-comment'),
+                'reply' => __('Your reply', 'dadsoo-agax-comment'),
+                'send' => __('Post reply', 'dadsoo-agax-comment'),
+                'cancel' => __('Cancel', 'dadsoo-agax-comment'),
             ),
             'honeypot' => self::HONEYPOT_FIELD,
         ));
@@ -170,15 +175,15 @@ class Dadsoo_Agax_Comment
         <div class="dadsoo-comment-form">
             <form class="dadsoo-comment-form-inner" method="post">
                 <div class="form-group">
-                    <label for="<?php echo esc_attr($uid); ?>-name"><?php esc_html_e('نام و نام خانوادگی*', 'dadsoo-agax-comment'); ?></label>
+                    <label for="<?php echo esc_attr($uid); ?>-name"><?php esc_html_e('Full name*', 'dadsoo-agax-comment'); ?></label>
                     <input type="text" id="<?php echo esc_attr($uid); ?>-name" name="name" required>
                 </div>
                 <div class="form-group">
-                    <label for="<?php echo esc_attr($uid); ?>-email"><?php esc_html_e('ایمیل', 'dadsoo-agax-comment'); ?></label>
+                    <label for="<?php echo esc_attr($uid); ?>-email"><?php esc_html_e('Email', 'dadsoo-agax-comment'); ?></label>
                     <input type="email" id="<?php echo esc_attr($uid); ?>-email" name="email">
                 </div>
                 <div class="form-group">
-                    <label for="<?php echo esc_attr($uid); ?>-comment"><?php esc_html_e('نظر شما*', 'dadsoo-agax-comment'); ?></label>
+                    <label for="<?php echo esc_attr($uid); ?>-comment"><?php esc_html_e('Your comment*', 'dadsoo-agax-comment'); ?></label>
                     <textarea
                         class="dadsoo-comment-textarea"
                         id="<?php echo esc_attr($uid); ?>-comment"
@@ -193,7 +198,7 @@ class Dadsoo_Agax_Comment
                 <?php wp_nonce_field(self::NONCE_ACTION, self::NONCE_FIELD); ?>
                 <button type="submit" class="dadsoo-submit-btn">
                     <span class="dadsoo-spinner" aria-hidden="true"></span>
-                    <span class="dadsoo-submit-btn-text"><?php esc_html_e('ارسال نظر', 'dadsoo-agax-comment'); ?></span>
+                    <span class="dadsoo-submit-btn-text"><?php esc_html_e('Post comment', 'dadsoo-agax-comment'); ?></span>
                 </button>
                 <div class="dadsoo-message" role="status" aria-live="polite"></div>
             </form>
@@ -209,7 +214,7 @@ class Dadsoo_Agax_Comment
     {
     ?>
         <div class="dadsoo-hp" aria-hidden="true">
-            <label for="<?php echo esc_attr($uid); ?>-hp"><?php esc_html_e('این فیلد را خالی بگذارید', 'dadsoo-agax-comment'); ?></label>
+            <label for="<?php echo esc_attr($uid); ?>-hp"><?php esc_html_e('Leave this field empty', 'dadsoo-agax-comment'); ?></label>
             <input type="text" id="<?php echo esc_attr($uid); ?>-hp" name="<?php echo esc_attr(self::HONEYPOT_FIELD); ?>" value="" tabindex="-1" autocomplete="off">
         </div>
     <?php
@@ -221,9 +226,9 @@ class Dadsoo_Agax_Comment
             'items' => 5,
             'vote_icons' => array(),
             'avatar_size' => self::DEFAULT_AVATAR_SIZE,
-            'load_more_text' => __('بارگذاری نظرات بیشتر', 'dadsoo-agax-comment'),
-            'loading_text' => __('در حال بارگذاری نظرات…', 'dadsoo-agax-comment'),
-            'empty_text' => __('هنوز نظری ثبت نشده است.', 'dadsoo-agax-comment'),
+            'load_more_text' => __('Load more comments', 'dadsoo-agax-comment'),
+            'loading_text' => __('Loading comments…', 'dadsoo-agax-comment'),
+            'empty_text' => __('No comments yet.', 'dadsoo-agax-comment'),
         ), $atts, 'dadsoo-agax-comments');
 
         $post_id = $this->current_post_id();
@@ -233,9 +238,9 @@ class Dadsoo_Agax_Comment
 
         $this->enqueue_assets();
 
-        $loading_text = $this->sanitize_label($atts['loading_text'], __('در حال بارگذاری نظرات…', 'dadsoo-agax-comment'));
-        $empty_text = $this->sanitize_label($atts['empty_text'], __('هنوز نظری ثبت نشده است.', 'dadsoo-agax-comment'));
-        $load_more_text = $this->sanitize_label($atts['load_more_text'], __('بارگذاری نظرات بیشتر', 'dadsoo-agax-comment'));
+        $loading_text = $this->sanitize_label($atts['loading_text'], __('Loading comments…', 'dadsoo-agax-comment'));
+        $empty_text = $this->sanitize_label($atts['empty_text'], __('No comments yet.', 'dadsoo-agax-comment'));
+        $load_more_text = $this->sanitize_label($atts['load_more_text'], __('Load more comments', 'dadsoo-agax-comment'));
 
         ob_start();
     ?>
@@ -372,7 +377,7 @@ class Dadsoo_Agax_Comment
                     <div class="dadsoo-comment-actions">
                         <?php if ($can_reply): ?>
                             <button type="button" class="dadsoo-reply-btn" data-comment-id="<?php echo esc_attr($comment_id); ?>">
-                                <?php esc_html_e('پاسخ به نظر', 'dadsoo-agax-comment'); ?>
+                                <?php esc_html_e('Reply', 'dadsoo-agax-comment'); ?>
                             </button>
                         <?php endif; ?>
                         <?php
@@ -402,8 +407,8 @@ class Dadsoo_Agax_Comment
     {
         $is_active = ($user_vote === $vote_type);
         $label = 'like' === $vote_type
-            ? __('لایک', 'dadsoo-agax-comment')
-            : __('دیسلایک', 'dadsoo-agax-comment');
+            ? __('Like', 'dadsoo-agax-comment')
+            : __('Dislike', 'dadsoo-agax-comment');
     ?>
         <button type="button" class="dadsoo-vote-btn<?php echo $is_active ? ' active' : ''; ?>"
             data-comment-id="<?php echo esc_attr($comment_id); ?>"
@@ -593,7 +598,7 @@ class Dadsoo_Agax_Comment
         $vote_type = isset($_POST['vote_type']) ? sanitize_key(wp_unslash($_POST['vote_type'])) : '';
 
         if (!in_array($vote_type, array('like', 'dislike'), true) || !$comment_id || !get_comment($comment_id)) {
-            wp_send_json_error(__('رأی یا نظر معتبر نیست.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Invalid vote or comment.', 'dadsoo-agax-comment'), 400);
         }
 
         $meta_key = $this->vote_meta_key();
@@ -651,8 +656,10 @@ class Dadsoo_Agax_Comment
 
     public function ajax_submit_comment()
     {
-        if (!$this->verify_nonce(self::NONCE_FIELD)) {
-            wp_send_json_error(__('خطای امنیتی. صفحه را تازه کنید و دوباره تلاش کنید.', 'dadsoo-agax-comment'), 403);
+        // فیلد نانس این فرم به‌جای «_wpnonce» نام سفارشی دارد، پس نام آن هم به‌عنوان
+        // آرگومان دوم داده می‌شود؛ $die=false تا پیام خطای خودمان به‌جای wp_die() برگردد.
+        if (!check_ajax_referer(self::NONCE_ACTION, self::NONCE_FIELD, false)) {
+            wp_send_json_error(__('Security check failed. Please refresh the page and try again.', 'dadsoo-agax-comment'), 403);
         }
 
         $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
@@ -661,27 +668,27 @@ class Dadsoo_Agax_Comment
         $comment = isset($_POST['comment']) ? trim(wp_kses(wp_unslash($_POST['comment']), $this->allowed_tags())) : '';
 
         if ($this->honeypot_tripped()) {
-            wp_send_json_error(__('درخواست معتبر نیست.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Invalid request.', 'dadsoo-agax-comment'), 400);
         }
 
         if ($this->string_length($name) < 2) {
-            wp_send_json_error(__('نام باید حداقل ۲ کاراکتر داشته باشد.', 'dadsoo-agax-comment'));
+            wp_send_json_error(__('Name must be at least 2 characters.', 'dadsoo-agax-comment'));
         }
 
         if ($this->string_length($comment) < 5) {
-            wp_send_json_error(__('نظر باید حداقل ۵ کاراکتر داشته باشد.', 'dadsoo-agax-comment'));
+            wp_send_json_error(__('Comment must be at least 5 characters.', 'dadsoo-agax-comment'));
         }
 
         if ($email && !is_email($email)) {
-            wp_send_json_error(__('فرمت ایمیل وارد شده صحیح نیست.', 'dadsoo-agax-comment'));
+            wp_send_json_error(__('The email address is not valid.', 'dadsoo-agax-comment'));
         }
 
         if (!$post_id || !get_post($post_id)) {
-            wp_send_json_error(__('پست معتبر نیست.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Invalid post.', 'dadsoo-agax-comment'), 400);
         }
 
         if (!comments_open($post_id)) {
-            wp_send_json_error(__('ارسال نظر برای این پست بسته است.', 'dadsoo-agax-comment'), 403);
+            wp_send_json_error(__('Comments are closed for this post.', 'dadsoo-agax-comment'), 403);
         }
 
         $this->insert_and_respond(array(
@@ -690,7 +697,7 @@ class Dadsoo_Agax_Comment
             'comment_author_email' => $email,
             'comment_content' => $comment,
             'comment_parent' => 0,
-        ), 0, __('نظر شما ثبت و منتشر شد.', 'dadsoo-agax-comment'), __('نظر شما ثبت شد و پس از تأیید نمایش داده می‌شود.', 'dadsoo-agax-comment'));
+        ), 0, __('Your comment has been posted and published.', 'dadsoo-agax-comment'), __('Your comment has been submitted and will appear after approval.', 'dadsoo-agax-comment'));
     }
 
     public function ajax_reply_comment()
@@ -704,27 +711,27 @@ class Dadsoo_Agax_Comment
         $comment = isset($_POST['comment']) ? trim(wp_kses(wp_unslash($_POST['comment']), $this->allowed_tags())) : '';
 
         if ($this->honeypot_tripped()) {
-            wp_send_json_error(__('درخواست معتبر نیست.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Invalid request.', 'dadsoo-agax-comment'), 400);
         }
 
         if ('' === $name || '' === $comment) {
-            wp_send_json_error(__('لطفاً نام و پاسخ خود را وارد کنید.', 'dadsoo-agax-comment'));
+            wp_send_json_error(__('Please enter your name and reply.', 'dadsoo-agax-comment'));
         }
 
         if ($email && !is_email($email)) {
-            wp_send_json_error(__('فرمت ایمیل وارد شده صحیح نیست.', 'dadsoo-agax-comment'));
+            wp_send_json_error(__('The email address is not valid.', 'dadsoo-agax-comment'));
         }
 
         $parent = get_comment($parent_id);
         if (!$parent || !$post_id || (int) $parent->comment_post_ID !== $post_id || !comments_open($post_id)) {
-            wp_send_json_error(__('نظر والد یا پست معتبر نیست.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Invalid parent comment or post.', 'dadsoo-agax-comment'), 400);
         }
 
         $depth = $this->comment_depth($parent) + 1;
 
         // پاسخ عمیق‌تر از حد مجاز پذیرفته نمی‌شود، چون در فهرست قابل نمایش نیست.
         if ($depth > self::MAX_DEPTH) {
-            wp_send_json_error(__('امکان پاسخ در این سطح وجود ندارد.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Replies are not allowed at this depth.', 'dadsoo-agax-comment'), 400);
         }
 
         $this->insert_and_respond(array(
@@ -733,7 +740,7 @@ class Dadsoo_Agax_Comment
             'comment_author_email' => $email,
             'comment_content' => $comment,
             'comment_parent' => $parent_id,
-        ), $depth, __('پاسخ شما ثبت و منتشر شد.', 'dadsoo-agax-comment'), __('پاسخ شما ثبت شد و پس از تأیید نمایش داده می‌شود.', 'dadsoo-agax-comment'));
+        ), $depth, __('Your reply has been posted and published.', 'dadsoo-agax-comment'), __('Your reply has been submitted and will appear after approval.', 'dadsoo-agax-comment'));
     }
 
     /**
@@ -757,14 +764,19 @@ class Dadsoo_Agax_Comment
         }
 
         if (!$comment_id) {
-            wp_send_json_error(__('خطا در ثبت نظر. لطفاً مجدداً تلاش کنید.', 'dadsoo-agax-comment'));
+            wp_send_json_error(__('There was an error saving your comment. Please try again.', 'dadsoo-agax-comment'));
         }
 
         $comment = get_comment($comment_id);
         $is_approved = $comment && '1' === (string) $comment->comment_approved;
 
+        // نانس در ابتدای هر دو تابع فراخوان‌کننده بررسی شده؛ sanitize_vote_icons() و
+        // sanitize_avatar_size() هر مقدار را کامل اعتبارسنجی می‌کنند (کتابخانه با regex،
+        // آدرس با sanitize_local_url، اندازه با absint)، phpcs فقط نام سفارشی را نمی‌شناسد.
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
         $vote_icons = isset($_POST['vote_icons']) ? $this->sanitize_vote_icons(wp_unslash($_POST['vote_icons'])) : array();
-        $avatar_size = isset($_POST['avatar_size']) ? $this->sanitize_avatar_size($_POST['avatar_size']) : self::DEFAULT_AVATAR_SIZE;
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $avatar_size = isset($_POST['avatar_size']) ? $this->sanitize_avatar_size(wp_unslash($_POST['avatar_size'])) : self::DEFAULT_AVATAR_SIZE;
 
         wp_send_json_success(array(
             'approved' => $is_approved,
@@ -779,14 +791,20 @@ class Dadsoo_Agax_Comment
 
         $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
         $offset = isset($_POST['offset']) ? max(0, (int) $_POST['offset']) : 0;
-        $items = $this->sanitize_items(isset($_POST['items']) ? $_POST['items'] : 5);
+        // sanitize_items() خودش absint() را اجرا می‌کند.
+        $items = $this->sanitize_items(isset($_POST['items']) ? wp_unslash($_POST['items']) : 5); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
         if (!$post_id || !get_post($post_id)) {
-            wp_send_json_error(__('پست معتبر نیست.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Invalid post.', 'dadsoo-agax-comment'), 400);
         }
 
+        // نانس در ابتدای هر دو تابع فراخوان‌کننده بررسی شده؛ sanitize_vote_icons() و
+        // sanitize_avatar_size() هر مقدار را کامل اعتبارسنجی می‌کنند (کتابخانه با regex،
+        // آدرس با sanitize_local_url، اندازه با absint)، phpcs فقط نام سفارشی را نمی‌شناسد.
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
         $vote_icons = isset($_POST['vote_icons']) ? $this->sanitize_vote_icons(wp_unslash($_POST['vote_icons'])) : array();
-        $avatar_size = isset($_POST['avatar_size']) ? $this->sanitize_avatar_size($_POST['avatar_size']) : self::DEFAULT_AVATAR_SIZE;
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $avatar_size = isset($_POST['avatar_size']) ? $this->sanitize_avatar_size(wp_unslash($_POST['avatar_size'])) : self::DEFAULT_AVATAR_SIZE;
 
         list($roots, $children, $has_more) = $this->fetch_comment_tree($post_id, $offset, $items);
 
@@ -799,18 +817,15 @@ class Dadsoo_Agax_Comment
 
     // -------------------------------------------------------------- helpers
 
-    private function verify_nonce($field)
-    {
-        if (empty($_POST[$field])) {
-            return false;
-        }
-
-        return (bool) wp_verify_nonce(sanitize_text_field(wp_unslash($_POST[$field])), self::NONCE_ACTION);
-    }
-
+    /**
+     * هر دو فراخوان‌کننده (ajax_submit_comment و ajax_reply_comment) پیش از این
+     * تابع نانس را بررسی کرده‌اند؛ خودِ این متد جدا تست می‌شود و به همین دلیل نانس
+     * را دوباره بررسی نمی‌کند.
+     */
     private function honeypot_tripped()
     {
-        return isset($_POST[self::HONEYPOT_FIELD]) && '' !== trim((string) wp_unslash($_POST[self::HONEYPOT_FIELD]));
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce is verified by the caller before this runs.
+        return isset($_POST[self::HONEYPOT_FIELD]) && '' !== trim(sanitize_text_field(wp_unslash($_POST[self::HONEYPOT_FIELD])));
     }
 
     private function current_post_id()
@@ -895,7 +910,7 @@ class Dadsoo_Agax_Comment
     {
         add_submenu_page(
             'options-general.php',
-            __('تنظیمات Dadsoo Agax Comment', 'dadsoo-agax-comment'),
+            __('Dadsoo Agax Comment Settings', 'dadsoo-agax-comment'),
             __('Dadsoo Agax Comment', 'dadsoo-agax-comment'),
             'manage_options',
             'dadsoo-agax-comment-settings',
@@ -907,18 +922,18 @@ class Dadsoo_Agax_Comment
     {
     ?>
         <div class="wrap">
-            <h1><?php esc_html_e('تنظیمات Dadsoo Agax Comment', 'dadsoo-agax-comment'); ?></h1>
+            <h1><?php esc_html_e('Dadsoo Agax Comment Settings', 'dadsoo-agax-comment'); ?></h1>
             <div class="dadsoo-settings-content">
-                <h2><?php esc_html_e('راهنمای استفاده', 'dadsoo-agax-comment'); ?></h2>
-                <p><?php esc_html_e('برای نمایش فرم ثبت نظر از شورت‌کد زیر استفاده کنید:', 'dadsoo-agax-comment'); ?></p>
+                <h2><?php esc_html_e('How to use', 'dadsoo-agax-comment'); ?></h2>
+                <p><?php esc_html_e('Use the following shortcode to display the comment form:', 'dadsoo-agax-comment'); ?></p>
                 <code>[dadsoo-agax-comment-form]</code>
 
-                <p><?php esc_html_e('برای نمایش فهرست نظرات از شورت‌کد زیر استفاده کنید:', 'dadsoo-agax-comment'); ?></p>
+                <p><?php esc_html_e('Use the following shortcode to display the comments list:', 'dadsoo-agax-comment'); ?></p>
                 <code>[dadsoo-agax-comments]</code>
-                <p><?php esc_html_e('یا برای تعیین تعداد نظرات نمایش داده شده:', 'dadsoo-agax-comment'); ?></p>
+                <p><?php esc_html_e('Or set the number of comments shown:', 'dadsoo-agax-comment'); ?></p>
                 <code>[dadsoo-agax-comments items="10" avatar_size="72"]</code>
 
-                <p><?php esc_html_e('شورت‌کدهای elin-agax-comment-form و elin-agax-comments هنوز کار می‌کنند، اما منسوخ‌اند.', 'dadsoo-agax-comment'); ?></p>
+                <p><?php esc_html_e('The elin-agax-comment-form and elin-agax-comments shortcodes still work, but are deprecated.', 'dadsoo-agax-comment'); ?></p>
             </div>
         </div>
 <?php

@@ -1,0 +1,357 @@
+# Copyright (C) 2026 Iman Shadmehri
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Dadsoo Agax Comment 3.2.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/dadsoo-agax-comment\n"
+"Last-Translator: Iman Shadmehri\n"
+"Language-Team: Persian\n"
+"Language: fa_IR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Domain: dadsoo-agax-comment\n"
+
+#. Plugin Name of the plugin
+#: dadsoo-agax-comment.php
+#: dadsoo-agax-comment.php:901
+msgid "Dadsoo Agax Comment"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: dadsoo-agax-comment.php
+msgid "https://elinweb.ir"
+msgstr ""
+
+#. Description of the plugin
+#: dadsoo-agax-comment.php
+msgid "Advanced AJAX comment system with threaded replies, like/dislike voting, and full moderation control."
+msgstr "سیستم کامنت‌گذاری پیشرفته Dadsoo با پاسخ‌های تو در تو و مدیریت کامل"
+
+#. Author of the plugin
+#: dadsoo-agax-comment.php
+msgid "Iman Shadmehri"
+msgstr "ایمان شادمهری"
+
+#: dadsoo-agax-comment.php:129
+msgid "Your comment has been saved."
+msgstr "نظر شما ثبت شد."
+
+#: dadsoo-agax-comment.php:130
+msgid "There was an error saving your comment."
+msgstr "خطا در ثبت نظر."
+
+#: dadsoo-agax-comment.php:131
+msgid "Your reply has been saved."
+msgstr "پاسخ شما ثبت شد."
+
+#: dadsoo-agax-comment.php:132
+msgid "There was an error saving your reply."
+msgstr "خطا در ثبت پاسخ."
+
+#: dadsoo-agax-comment.php:133
+msgid "A server error occurred. Please try again."
+msgstr "خطا در ارتباط با سرور. لطفاً مجدداً تلاش کنید."
+
+#: dadsoo-agax-comment.php:134
+msgid "Full name"
+msgstr "نام و نام خانوادگی"
+
+#: dadsoo-agax-comment.php:135
+#: dadsoo-agax-comment.php:179
+msgid "Email"
+msgstr "ایمیل"
+
+#: dadsoo-agax-comment.php:136
+msgid "Your reply"
+msgstr "پاسخ شما"
+
+#: dadsoo-agax-comment.php:137
+msgid "Post reply"
+msgstr "ارسال پاسخ"
+
+#: dadsoo-agax-comment.php:138
+msgid "Cancel"
+msgstr "انصراف"
+
+#: dadsoo-agax-comment.php:175
+msgid "Full name*"
+msgstr "نام و نام خانوادگی*"
+
+#: dadsoo-agax-comment.php:183
+msgid "Your comment*"
+msgstr "نظر شما*"
+
+#: dadsoo-agax-comment.php:198
+msgid "Post comment"
+msgstr "ارسال نظر"
+
+#: dadsoo-agax-comment.php:214
+msgid "Leave this field empty"
+msgstr "این فیلد را خالی بگذارید"
+
+#: dadsoo-agax-comment.php:226
+#: dadsoo-agax-comment.php:240
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:67
+msgid "Load more comments"
+msgstr "بارگذاری نظرات بیشتر"
+
+#: dadsoo-agax-comment.php:227
+#: dadsoo-agax-comment.php:238
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:74
+msgid "Loading comments…"
+msgstr "در حال بارگذاری نظرات…"
+
+#: dadsoo-agax-comment.php:228
+#: dadsoo-agax-comment.php:239
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:81
+msgid "No comments yet."
+msgstr "هنوز نظری ثبت نشده است."
+
+#: dadsoo-agax-comment.php:377
+msgid "Reply"
+msgstr "پاسخ به نظر"
+
+#: dadsoo-agax-comment.php:407
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:157
+msgid "Like"
+msgstr "لایک"
+
+#: dadsoo-agax-comment.php:408
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:158
+msgid "Dislike"
+msgstr "دیسلایک"
+
+#: dadsoo-agax-comment.php:598
+msgid "Invalid vote or comment."
+msgstr "رأی یا نظر معتبر نیست."
+
+#: dadsoo-agax-comment.php:657
+msgid "Security check failed. Please refresh the page and try again."
+msgstr "خطای امنیتی. صفحه را تازه کنید و دوباره تلاش کنید."
+
+#: dadsoo-agax-comment.php:666
+#: dadsoo-agax-comment.php:709
+msgid "Invalid request."
+msgstr "درخواست معتبر نیست."
+
+#: dadsoo-agax-comment.php:670
+msgid "Name must be at least 2 characters."
+msgstr "نام باید حداقل ۲ کاراکتر داشته باشد."
+
+#: dadsoo-agax-comment.php:674
+msgid "Comment must be at least 5 characters."
+msgstr "نظر باید حداقل ۵ کاراکتر داشته باشد."
+
+#: dadsoo-agax-comment.php:678
+#: dadsoo-agax-comment.php:717
+msgid "The email address is not valid."
+msgstr "فرمت ایمیل وارد شده صحیح نیست."
+
+#: dadsoo-agax-comment.php:682
+#: dadsoo-agax-comment.php:787
+msgid "Invalid post."
+msgstr "پست معتبر نیست."
+
+#: dadsoo-agax-comment.php:686
+msgid "Comments are closed for this post."
+msgstr "ارسال نظر برای این پست بسته است."
+
+#: dadsoo-agax-comment.php:695
+msgid "Your comment has been posted and published."
+msgstr "نظر شما ثبت و منتشر شد."
+
+#: dadsoo-agax-comment.php:695
+msgid "Your comment has been submitted and will appear after approval."
+msgstr "نظر شما ثبت شد و پس از تأیید نمایش داده می‌شود."
+
+#: dadsoo-agax-comment.php:713
+msgid "Please enter your name and reply."
+msgstr "لطفاً نام و پاسخ خود را وارد کنید."
+
+#: dadsoo-agax-comment.php:722
+msgid "Invalid parent comment or post."
+msgstr "نظر والد یا پست معتبر نیست."
+
+#: dadsoo-agax-comment.php:729
+msgid "Replies are not allowed at this depth."
+msgstr "امکان پاسخ در این سطح وجود ندارد."
+
+#: dadsoo-agax-comment.php:738
+msgid "Your reply has been posted and published."
+msgstr "پاسخ شما ثبت و منتشر شد."
+
+#: dadsoo-agax-comment.php:738
+msgid "Your reply has been submitted and will appear after approval."
+msgstr "پاسخ شما ثبت شد و پس از تأیید نمایش داده می‌شود."
+
+#: dadsoo-agax-comment.php:762
+msgid "There was an error saving your comment. Please try again."
+msgstr "خطا در ثبت نظر. لطفاً مجدداً تلاش کنید."
+
+#: dadsoo-agax-comment.php:900
+#: dadsoo-agax-comment.php:912
+msgid "Dadsoo Agax Comment Settings"
+msgstr "تنظیمات Dadsoo Agax Comment"
+
+#: dadsoo-agax-comment.php:914
+msgid "How to use"
+msgstr "راهنمای استفاده"
+
+#: dadsoo-agax-comment.php:915
+msgid "Use the following shortcode to display the comment form:"
+msgstr "برای نمایش فرم ثبت نظر از شورت‌کد زیر استفاده کنید:"
+
+#: dadsoo-agax-comment.php:918
+msgid "Use the following shortcode to display the comments list:"
+msgstr "برای نمایش فهرست نظرات از شورت‌کد زیر استفاده کنید:"
+
+#: dadsoo-agax-comment.php:920
+msgid "Or set the number of comments shown:"
+msgstr "یا برای تعیین تعداد نظرات نمایش داده شده:"
+
+#: dadsoo-agax-comment.php:923
+msgid "The elin-agax-comment-form and elin-agax-comments shortcodes still work, but are deprecated."
+msgstr "شورت‌کدهای elin-agax-comment-form و elin-agax-comments هنوز کار می‌کنند، اما منسوخ‌اند."
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:21
+msgid "Dadsoo Agax Comments"
+msgstr ""
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:52
+msgid "List Settings"
+msgstr "تنظیمات فهرست"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:57
+msgid "Comments per initial load"
+msgstr "تعداد نظرات در بارگذاری اولیه"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:65
+msgid "Load more button text"
+msgstr "متن دکمهٔ بارگذاری بیشتر"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:72
+msgid "Loading state text"
+msgstr "متن حالت بارگذاری"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:79
+msgid "Empty state text"
+msgstr "متن وقتی هیچ نظری نیست"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:88
+msgid "Vote Icons"
+msgstr "آیکون‌های رأی"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:93
+msgid "Like, inactive state"
+msgstr "لایک، حالت غیرفعال"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:98
+msgid "Like, active state"
+msgstr "لایک، حالت فعال"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:103
+msgid "Dislike, inactive state"
+msgstr "دیسلایک، حالت غیرفعال"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:108
+msgid "Dislike, active state"
+msgstr "دیسلایک، حالت فعال"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:116
+msgid "Author"
+msgstr "نویسنده"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:120
+msgid "Avatar size"
+msgstr "اندازه تصویر نویسنده"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:126
+msgid "Avatar border radius"
+msgstr "گردی تصویر نویسنده"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:132
+msgid "Author name color"
+msgstr "رنگ نام نویسنده"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:143
+msgid "Comment Text"
+msgstr "متن نظر"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:147
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:181
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:194
+msgid "Text color"
+msgstr "رنگ متن"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:168
+msgid "Load More"
+msgstr "بارگذاری بیشتر"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:179
+msgid "Normal"
+msgstr "عادی"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:186
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:199
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:313
+msgid "Background color"
+msgstr "رنگ پس‌زمینه"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:192
+msgid "Hover"
+msgstr "هاور"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:214
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:284
+msgid "Padding"
+msgstr "فاصلهٔ داخلی"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:223
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:294
+msgid "Border radius"
+msgstr "گردی گوشه‌ها"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:232
+msgid "Loading & empty state message"
+msgstr "پیام بارگذاری و حالت خالی"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:238
+msgid "Text & spinner color"
+msgstr "رنگ متن و چرخانه"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:249
+msgid "New comments indicator"
+msgstr "نشانهٔ نظرات تازه‌بارگذاری‌شده"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:255
+msgid "Flash color"
+msgstr "رنگ فلَش"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:263
+msgid "Scroll offset from top"
+msgstr "فاصله از بالا هنگام اسکرول"
+
+#. translators: %s: like or dislike.
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:278
+#, php-format
+msgid "%s Button"
+msgstr "دکمه %s"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:303
+msgid "Inactive (Outline)"
+msgstr "حالت غیرفعال (Outline)"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:303
+msgid "Active (Fill)"
+msgstr "حالت فعال (Fill)"
+
+#: includes/class-dadsoo-agax-elementor-comments-widget.php:308
+msgid "Icon color"
+msgstr "رنگ آیکون"
+
+#: includes/class-dadsoo-agax-elementor-form-widget.php:21
+msgid "Dadsoo Agax Comment Form"
+msgstr ""
