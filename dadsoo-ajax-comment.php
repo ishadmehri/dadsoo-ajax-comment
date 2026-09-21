@@ -1,14 +1,14 @@
 <?php
 /*
-Plugin Name: Dadsoo Agax Comment
+Plugin Name: Dadsoo Ajax Comment
 Plugin URI: https://elinweb.ir
 Description: Advanced AJAX comment system with threaded replies, like/dislike voting, and full moderation control.
-Version: 3.2.0
+Version: 4.0.0
 Author: Iman Shadmehri
 Author URI: https://elinweb.ir
 Requires at least: 5.8
 Requires PHP: 7.4
-Text Domain: dadsoo-agax-comment
+Text Domain: dadsoo-ajax-comment
 Domain Path: /languages
 License: GPL v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -18,10 +18,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('DADSOO_AGAX_COMMENT_VERSION', '3.2.0');
-define('DADSOO_AGAX_COMMENT_FILE', __FILE__);
+define('DADSOO_AJAX_COMMENT_VERSION', '4.0.0');
+define('DADSOO_AJAX_COMMENT_FILE', __FILE__);
 
-class Dadsoo_Agax_Comment
+class Dadsoo_Ajax_Comment
 {
     /** بیشترین عمق تو در تویی که استایل‌ها و رندر پشتیبانی می‌کنند. */
     const MAX_DEPTH = 3;
@@ -29,19 +29,19 @@ class Dadsoo_Agax_Comment
     /** اندازهٔ پیش‌فرض آواتار بر حسب پیکسل. */
     const DEFAULT_AVATAR_SIZE = 42;
 
-    const NONCE_ACTION = 'dadsoo-agax-comment-nonce';
-    const NONCE_FIELD = 'dadsoo_agax_nonce';
+    const NONCE_ACTION = 'dadsoo-ajax-comment-nonce';
+    const NONCE_FIELD = 'dadsoo_ajax_nonce';
 
-    const META_LIKES = 'dadsoo_agax_likes';
-    const META_DISLIKES = 'dadsoo_agax_dislikes';
+    const META_LIKES = 'dadsoo_ajax_likes';
+    const META_DISLIKES = 'dadsoo_ajax_dislikes';
 
     /** به‌ازای هر رأی‌دهنده یک ردیف متا با این پیشوند ساخته می‌شود. */
-    const META_VOTE_PREFIX = 'dadsoo_agax_vote_';
+    const META_VOTE_PREFIX = 'dadsoo_ajax_vote_';
 
-    const SCHEMA_OPTION = 'dadsoo_agax_comment_schema';
+    const SCHEMA_OPTION = 'dadsoo_ajax_comment_schema';
 
     /** نام فیلد تلهٔ ربات؛ باید همیشه خالی بماند. */
-    const HONEYPOT_FIELD = 'dadsoo_agax_confirm';
+    const HONEYPOT_FIELD = 'dadsoo_ajax_confirm';
 
     /** شمارندهٔ نمونه‌های فرم در یک صفحه، برای ساخت idهای یکتا. */
     private $form_instance = 0;
@@ -53,17 +53,19 @@ class Dadsoo_Agax_Comment
 
         add_action('wp_enqueue_scripts', array($this, 'register_assets'));
 
-        add_shortcode('dadsoo-agax-comment-form', array($this, 'render_comment_form'));
-        add_shortcode('dadsoo-agax-comments', array($this, 'render_comments_list'));
+        add_shortcode('dadsoo-ajax-comment-form', array($this, 'render_comment_form'));
+        add_shortcode('dadsoo-ajax-comments', array($this, 'render_comments_list'));
 
         // شورت‌کدهای نسخه‌های پیشین تا محتوای قدیمی از کار نیفتد.
+        add_shortcode('dadsoo-agax-comment-form', array($this, 'render_comment_form'));
+        add_shortcode('dadsoo-agax-comments', array($this, 'render_comments_list'));
         add_shortcode('elin-agax-comment-form', array($this, 'render_comment_form'));
         add_shortcode('elin-agax-comments', array($this, 'render_comments_list'));
 
         foreach (array('submit_comment', 'load_comments', 'comment_vote', 'reply_comment') as $endpoint) {
             $callback = array($this, 'ajax_' . $endpoint);
-            add_action('wp_ajax_dadsoo_agax_' . $endpoint, $callback);
-            add_action('wp_ajax_nopriv_dadsoo_agax_' . $endpoint, $callback);
+            add_action('wp_ajax_dadsoo_ajax_' . $endpoint, $callback);
+            add_action('wp_ajax_nopriv_dadsoo_ajax_' . $endpoint, $callback);
         }
 
         add_action('admin_menu', array($this, 'add_admin_menu'));
@@ -72,25 +74,42 @@ class Dadsoo_Agax_Comment
 
     public function load_textdomain()
     {
-        load_plugin_textdomain('dadsoo-agax-comment', false, dirname(plugin_basename(DADSOO_AGAX_COMMENT_FILE)) . '/languages');
+        load_plugin_textdomain('dadsoo-ajax-comment', false, dirname(plugin_basename(DADSOO_AJAX_COMMENT_FILE)) . '/languages');
     }
 
     /**
-     * متاهای نسخه‌های elinweb را به پیشوند dadsoo منتقل می‌کند تا شمارش رأی‌های
-     * پیشین از دست نرود.
+     * متاهای نسخه‌های پیشین (elinweb، و «agax» با غلط تایپی) را به شناسه‌های
+     * فعلی منتقل می‌کند تا شمارش رأی‌ها و رأی هر بازدیدکننده از دست نرود.
      */
     public function maybe_upgrade()
     {
-        if (get_option(self::SCHEMA_OPTION) === DADSOO_AGAX_COMMENT_VERSION) {
+        if (get_option(self::SCHEMA_OPTION) === DADSOO_AJAX_COMMENT_VERSION) {
             return;
         }
 
         global $wpdb;
 
         $renamed = 0;
-        foreach (array('elinweb_agax_likes' => self::META_LIKES, 'elinweb_agax_dislikes' => self::META_DISLIKES) as $old => $new) {
+        foreach (array(
+            'elinweb_agax_likes' => 'dadsoo_agax_likes',
+            'elinweb_agax_dislikes' => 'dadsoo_agax_dislikes',
+            'dadsoo_agax_likes' => self::META_LIKES,
+            'dadsoo_agax_dislikes' => self::META_DISLIKES,
+        ) as $old => $new) {
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- one-time bulk meta-key rename; no core API renames a meta key across all rows.
             $renamed += (int) $wpdb->update($wpdb->commentmeta, array('meta_key' => $new), array('meta_key' => $old));
+        }
+
+        // پیشوند رأی، شناسهٔ رأی‌دهنده را در انتهای خودش دارد (مثلاً dadsoo_agax_vote_u12)،
+        // پس با یک جایگزینی پیشوندی روی همهٔ ردیف‌ها منتقل می‌شود، نه با تطبیق دقیق کلید.
+        foreach (array('dadsoo_agax_vote_', 'elinweb_agax_vote_') as $old_prefix) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- one-time bulk prefix rename; the per-voter suffix rules out an exact-match rename.
+            $renamed += (int) $wpdb->query($wpdb->prepare(
+                "UPDATE {$wpdb->commentmeta} SET meta_key = REPLACE(meta_key, %s, %s) WHERE meta_key LIKE %s",
+                $old_prefix,
+                self::META_VOTE_PREFIX,
+                $wpdb->esc_like($old_prefix) . '%'
+            ));
         }
 
         // wp_cache_flush_group() و wp_cache_supports() هر دو از وردپرس ۶.۱ اضافه شده‌اند؛
@@ -99,7 +118,7 @@ class Dadsoo_Agax_Comment
             wp_cache_flush_group('comment_meta');
         }
 
-        update_option(self::SCHEMA_OPTION, DADSOO_AGAX_COMMENT_VERSION, true);
+        update_option(self::SCHEMA_OPTION, DADSOO_AJAX_COMMENT_VERSION, true);
     }
 
     // ---------------------------------------------------------------- assets
@@ -111,34 +130,34 @@ class Dadsoo_Agax_Comment
     public function register_assets()
     {
         wp_register_style(
-            'dadsoo-agax-comment',
-            plugins_url('assets/css/style.css', DADSOO_AGAX_COMMENT_FILE),
+            'dadsoo-ajax-comment',
+            plugins_url('assets/css/style.css', DADSOO_AJAX_COMMENT_FILE),
             array(),
-            DADSOO_AGAX_COMMENT_VERSION
+            DADSOO_AJAX_COMMENT_VERSION
         );
 
         wp_register_script(
-            'dadsoo-agax-comment',
-            plugins_url('assets/js/script.js', DADSOO_AGAX_COMMENT_FILE),
+            'dadsoo-ajax-comment',
+            plugins_url('assets/js/script.js', DADSOO_AJAX_COMMENT_FILE),
             array('jquery'),
-            DADSOO_AGAX_COMMENT_VERSION,
+            DADSOO_AJAX_COMMENT_VERSION,
             true
         );
 
-        wp_localize_script('dadsoo-agax-comment', 'dadsooAgaxComment', array(
+        wp_localize_script('dadsoo-ajax-comment', 'dadsooAjaxComment', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce(self::NONCE_ACTION),
             'i18n' => array(
-                'commentSaved' => __('Your comment has been saved.', 'dadsoo-agax-comment'),
-                'commentFailed' => __('There was an error saving your comment.', 'dadsoo-agax-comment'),
-                'replySaved' => __('Your reply has been saved.', 'dadsoo-agax-comment'),
-                'replyFailed' => __('There was an error saving your reply.', 'dadsoo-agax-comment'),
-                'serverError' => __('A server error occurred. Please try again.', 'dadsoo-agax-comment'),
-                'name' => __('Full name', 'dadsoo-agax-comment'),
-                'email' => __('Email', 'dadsoo-agax-comment'),
-                'reply' => __('Your reply', 'dadsoo-agax-comment'),
-                'send' => __('Post reply', 'dadsoo-agax-comment'),
-                'cancel' => __('Cancel', 'dadsoo-agax-comment'),
+                'commentSaved' => __('Your comment has been saved.', 'dadsoo-ajax-comment'),
+                'commentFailed' => __('There was an error saving your comment.', 'dadsoo-ajax-comment'),
+                'replySaved' => __('Your reply has been saved.', 'dadsoo-ajax-comment'),
+                'replyFailed' => __('There was an error saving your reply.', 'dadsoo-ajax-comment'),
+                'serverError' => __('A server error occurred. Please try again.', 'dadsoo-ajax-comment'),
+                'name' => __('Full name', 'dadsoo-ajax-comment'),
+                'email' => __('Email', 'dadsoo-ajax-comment'),
+                'reply' => __('Your reply', 'dadsoo-ajax-comment'),
+                'send' => __('Post reply', 'dadsoo-ajax-comment'),
+                'cancel' => __('Cancel', 'dadsoo-ajax-comment'),
             ),
             'honeypot' => self::HONEYPOT_FIELD,
         ));
@@ -146,7 +165,7 @@ class Dadsoo_Agax_Comment
         // اگر شورت‌کد در محتوای همین نوشته باشد، استایل زودتر صف می‌شود تا در head برود.
         $post = get_post();
         if ($post instanceof WP_Post) {
-            foreach (array('dadsoo-agax-comments', 'dadsoo-agax-comment-form', 'elin-agax-comments', 'elin-agax-comment-form') as $tag) {
+            foreach (array('dadsoo-ajax-comments', 'dadsoo-ajax-comment-form', 'dadsoo-agax-comments', 'dadsoo-agax-comment-form', 'elin-agax-comments', 'elin-agax-comment-form') as $tag) {
                 if (has_shortcode($post->post_content, $tag)) {
                     $this->enqueue_assets();
                     break;
@@ -157,8 +176,8 @@ class Dadsoo_Agax_Comment
 
     public function enqueue_assets()
     {
-        wp_enqueue_style('dadsoo-agax-comment');
-        wp_enqueue_script('dadsoo-agax-comment');
+        wp_enqueue_style('dadsoo-ajax-comment');
+        wp_enqueue_script('dadsoo-ajax-comment');
     }
 
     // --------------------------------------------------------------- render
@@ -175,15 +194,15 @@ class Dadsoo_Agax_Comment
         <div class="dadsoo-comment-form">
             <form class="dadsoo-comment-form-inner" method="post">
                 <div class="form-group">
-                    <label for="<?php echo esc_attr($uid); ?>-name"><?php esc_html_e('Full name*', 'dadsoo-agax-comment'); ?></label>
+                    <label for="<?php echo esc_attr($uid); ?>-name"><?php esc_html_e('Full name*', 'dadsoo-ajax-comment'); ?></label>
                     <input type="text" id="<?php echo esc_attr($uid); ?>-name" name="name" required>
                 </div>
                 <div class="form-group">
-                    <label for="<?php echo esc_attr($uid); ?>-email"><?php esc_html_e('Email', 'dadsoo-agax-comment'); ?></label>
+                    <label for="<?php echo esc_attr($uid); ?>-email"><?php esc_html_e('Email', 'dadsoo-ajax-comment'); ?></label>
                     <input type="email" id="<?php echo esc_attr($uid); ?>-email" name="email">
                 </div>
                 <div class="form-group">
-                    <label for="<?php echo esc_attr($uid); ?>-comment"><?php esc_html_e('Your comment*', 'dadsoo-agax-comment'); ?></label>
+                    <label for="<?php echo esc_attr($uid); ?>-comment"><?php esc_html_e('Your comment*', 'dadsoo-ajax-comment'); ?></label>
                     <textarea
                         class="dadsoo-comment-textarea"
                         id="<?php echo esc_attr($uid); ?>-comment"
@@ -194,11 +213,11 @@ class Dadsoo_Agax_Comment
                 </div>
                 <?php $this->render_honeypot($uid); ?>
                 <input type="hidden" name="post_id" value="<?php echo esc_attr($post_id); ?>">
-                <input type="hidden" name="action" value="dadsoo_agax_submit_comment">
+                <input type="hidden" name="action" value="dadsoo_ajax_submit_comment">
                 <?php wp_nonce_field(self::NONCE_ACTION, self::NONCE_FIELD); ?>
                 <button type="submit" class="dadsoo-submit-btn">
                     <span class="dadsoo-spinner" aria-hidden="true"></span>
-                    <span class="dadsoo-submit-btn-text"><?php esc_html_e('Post comment', 'dadsoo-agax-comment'); ?></span>
+                    <span class="dadsoo-submit-btn-text"><?php esc_html_e('Post comment', 'dadsoo-ajax-comment'); ?></span>
                 </button>
                 <div class="dadsoo-message" role="status" aria-live="polite"></div>
             </form>
@@ -214,7 +233,7 @@ class Dadsoo_Agax_Comment
     {
     ?>
         <div class="dadsoo-hp" aria-hidden="true">
-            <label for="<?php echo esc_attr($uid); ?>-hp"><?php esc_html_e('Leave this field empty', 'dadsoo-agax-comment'); ?></label>
+            <label for="<?php echo esc_attr($uid); ?>-hp"><?php esc_html_e('Leave this field empty', 'dadsoo-ajax-comment'); ?></label>
             <input type="text" id="<?php echo esc_attr($uid); ?>-hp" name="<?php echo esc_attr(self::HONEYPOT_FIELD); ?>" value="" tabindex="-1" autocomplete="off">
         </div>
     <?php
@@ -226,10 +245,10 @@ class Dadsoo_Agax_Comment
             'items' => 5,
             'vote_icons' => array(),
             'avatar_size' => self::DEFAULT_AVATAR_SIZE,
-            'load_more_text' => __('Load more comments', 'dadsoo-agax-comment'),
-            'loading_text' => __('Loading comments…', 'dadsoo-agax-comment'),
-            'empty_text' => __('No comments yet.', 'dadsoo-agax-comment'),
-        ), $atts, 'dadsoo-agax-comments');
+            'load_more_text' => __('Load more comments', 'dadsoo-ajax-comment'),
+            'loading_text' => __('Loading comments…', 'dadsoo-ajax-comment'),
+            'empty_text' => __('No comments yet.', 'dadsoo-ajax-comment'),
+        ), $atts, 'dadsoo-ajax-comments');
 
         $post_id = $this->current_post_id();
         if (!$post_id) {
@@ -238,9 +257,9 @@ class Dadsoo_Agax_Comment
 
         $this->enqueue_assets();
 
-        $loading_text = $this->sanitize_label($atts['loading_text'], __('Loading comments…', 'dadsoo-agax-comment'));
-        $empty_text = $this->sanitize_label($atts['empty_text'], __('No comments yet.', 'dadsoo-agax-comment'));
-        $load_more_text = $this->sanitize_label($atts['load_more_text'], __('Load more comments', 'dadsoo-agax-comment'));
+        $loading_text = $this->sanitize_label($atts['loading_text'], __('Loading comments…', 'dadsoo-ajax-comment'));
+        $empty_text = $this->sanitize_label($atts['empty_text'], __('No comments yet.', 'dadsoo-ajax-comment'));
+        $load_more_text = $this->sanitize_label($atts['load_more_text'], __('Load more comments', 'dadsoo-ajax-comment'));
 
         ob_start();
     ?>
@@ -377,7 +396,7 @@ class Dadsoo_Agax_Comment
                     <div class="dadsoo-comment-actions">
                         <?php if ($can_reply): ?>
                             <button type="button" class="dadsoo-reply-btn" data-comment-id="<?php echo esc_attr($comment_id); ?>">
-                                <?php esc_html_e('Reply', 'dadsoo-agax-comment'); ?>
+                                <?php esc_html_e('Reply', 'dadsoo-ajax-comment'); ?>
                             </button>
                         <?php endif; ?>
                         <?php
@@ -407,8 +426,8 @@ class Dadsoo_Agax_Comment
     {
         $is_active = ($user_vote === $vote_type);
         $label = 'like' === $vote_type
-            ? __('Like', 'dadsoo-agax-comment')
-            : __('Dislike', 'dadsoo-agax-comment');
+            ? __('Like', 'dadsoo-ajax-comment')
+            : __('Dislike', 'dadsoo-ajax-comment');
     ?>
         <button type="button" class="dadsoo-vote-btn<?php echo $is_active ? ' active' : ''; ?>"
             data-comment-id="<?php echo esc_attr($comment_id); ?>"
@@ -566,7 +585,7 @@ class Dadsoo_Agax_Comment
 
     /**
      * رأی فعلی این بازدیدکننده روی یک دیدگاه. مرجع، متای سمت سرور است؛ کوکی فقط
-     * برای رأی‌هایی خوانده می‌شود که پیش از نسخهٔ ۳ فقط در مرورگر ثبت شده بودند.
+     * برای رأی‌هایی خوانده می‌شود که در نسخه‌های پیشین فقط در مرورگر ثبت شده بودند.
      */
     private function current_vote($comment_id)
     {
@@ -575,7 +594,7 @@ class Dadsoo_Agax_Comment
             return $vote;
         }
 
-        foreach (array('dadsoo_agax_vote_', 'elinweb_agax_vote_') as $prefix) {
+        foreach (array('dadsoo_ajax_vote_', 'dadsoo_agax_vote_', 'elinweb_agax_vote_') as $prefix) {
             $cookie = $prefix . $comment_id;
             if (!isset($_COOKIE[$cookie])) {
                 continue;
@@ -598,7 +617,7 @@ class Dadsoo_Agax_Comment
         $vote_type = isset($_POST['vote_type']) ? sanitize_key(wp_unslash($_POST['vote_type'])) : '';
 
         if (!in_array($vote_type, array('like', 'dislike'), true) || !$comment_id || !get_comment($comment_id)) {
-            wp_send_json_error(__('Invalid vote or comment.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Invalid vote or comment.', 'dadsoo-ajax-comment'), 400);
         }
 
         $meta_key = $this->vote_meta_key();
@@ -640,7 +659,8 @@ class Dadsoo_Agax_Comment
         }
 
         $expiry = $vote_type ? time() + (30 * DAY_IN_SECONDS) : time() - YEAR_IN_SECONDS;
-        setcookie('dadsoo_agax_vote_' . $comment_id, $vote_type, $expiry, COOKIEPATH ? COOKIEPATH : '/', COOKIE_DOMAIN, is_ssl(), false);
+        setcookie('dadsoo_ajax_vote_' . $comment_id, $vote_type, $expiry, COOKIEPATH ? COOKIEPATH : '/', COOKIE_DOMAIN, is_ssl(), false);
+        setcookie('dadsoo_agax_vote_' . $comment_id, '', time() - YEAR_IN_SECONDS, COOKIEPATH ? COOKIEPATH : '/', COOKIE_DOMAIN, is_ssl(), false);
         setcookie('elinweb_agax_vote_' . $comment_id, '', time() - YEAR_IN_SECONDS, COOKIEPATH ? COOKIEPATH : '/', COOKIE_DOMAIN, is_ssl(), false);
     }
 
@@ -659,7 +679,7 @@ class Dadsoo_Agax_Comment
         // فیلد نانس این فرم به‌جای «_wpnonce» نام سفارشی دارد، پس نام آن هم به‌عنوان
         // آرگومان دوم داده می‌شود؛ $die=false تا پیام خطای خودمان به‌جای wp_die() برگردد.
         if (!check_ajax_referer(self::NONCE_ACTION, self::NONCE_FIELD, false)) {
-            wp_send_json_error(__('Security check failed. Please refresh the page and try again.', 'dadsoo-agax-comment'), 403);
+            wp_send_json_error(__('Security check failed. Please refresh the page and try again.', 'dadsoo-ajax-comment'), 403);
         }
 
         $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
@@ -668,27 +688,27 @@ class Dadsoo_Agax_Comment
         $comment = isset($_POST['comment']) ? trim(wp_kses(wp_unslash($_POST['comment']), $this->allowed_tags())) : '';
 
         if ($this->honeypot_tripped()) {
-            wp_send_json_error(__('Invalid request.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Invalid request.', 'dadsoo-ajax-comment'), 400);
         }
 
         if ($this->string_length($name) < 2) {
-            wp_send_json_error(__('Name must be at least 2 characters.', 'dadsoo-agax-comment'));
+            wp_send_json_error(__('Name must be at least 2 characters.', 'dadsoo-ajax-comment'));
         }
 
         if ($this->string_length($comment) < 5) {
-            wp_send_json_error(__('Comment must be at least 5 characters.', 'dadsoo-agax-comment'));
+            wp_send_json_error(__('Comment must be at least 5 characters.', 'dadsoo-ajax-comment'));
         }
 
         if ($email && !is_email($email)) {
-            wp_send_json_error(__('The email address is not valid.', 'dadsoo-agax-comment'));
+            wp_send_json_error(__('The email address is not valid.', 'dadsoo-ajax-comment'));
         }
 
         if (!$post_id || !get_post($post_id)) {
-            wp_send_json_error(__('Invalid post.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Invalid post.', 'dadsoo-ajax-comment'), 400);
         }
 
         if (!comments_open($post_id)) {
-            wp_send_json_error(__('Comments are closed for this post.', 'dadsoo-agax-comment'), 403);
+            wp_send_json_error(__('Comments are closed for this post.', 'dadsoo-ajax-comment'), 403);
         }
 
         $this->insert_and_respond(array(
@@ -697,7 +717,7 @@ class Dadsoo_Agax_Comment
             'comment_author_email' => $email,
             'comment_content' => $comment,
             'comment_parent' => 0,
-        ), 0, __('Your comment has been posted and published.', 'dadsoo-agax-comment'), __('Your comment has been submitted and will appear after approval.', 'dadsoo-agax-comment'));
+        ), 0, __('Your comment has been posted and published.', 'dadsoo-ajax-comment'), __('Your comment has been submitted and will appear after approval.', 'dadsoo-ajax-comment'));
     }
 
     public function ajax_reply_comment()
@@ -711,27 +731,27 @@ class Dadsoo_Agax_Comment
         $comment = isset($_POST['comment']) ? trim(wp_kses(wp_unslash($_POST['comment']), $this->allowed_tags())) : '';
 
         if ($this->honeypot_tripped()) {
-            wp_send_json_error(__('Invalid request.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Invalid request.', 'dadsoo-ajax-comment'), 400);
         }
 
         if ('' === $name || '' === $comment) {
-            wp_send_json_error(__('Please enter your name and reply.', 'dadsoo-agax-comment'));
+            wp_send_json_error(__('Please enter your name and reply.', 'dadsoo-ajax-comment'));
         }
 
         if ($email && !is_email($email)) {
-            wp_send_json_error(__('The email address is not valid.', 'dadsoo-agax-comment'));
+            wp_send_json_error(__('The email address is not valid.', 'dadsoo-ajax-comment'));
         }
 
         $parent = get_comment($parent_id);
         if (!$parent || !$post_id || (int) $parent->comment_post_ID !== $post_id || !comments_open($post_id)) {
-            wp_send_json_error(__('Invalid parent comment or post.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Invalid parent comment or post.', 'dadsoo-ajax-comment'), 400);
         }
 
         $depth = $this->comment_depth($parent) + 1;
 
         // پاسخ عمیق‌تر از حد مجاز پذیرفته نمی‌شود، چون در فهرست قابل نمایش نیست.
         if ($depth > self::MAX_DEPTH) {
-            wp_send_json_error(__('Replies are not allowed at this depth.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Replies are not allowed at this depth.', 'dadsoo-ajax-comment'), 400);
         }
 
         $this->insert_and_respond(array(
@@ -740,7 +760,7 @@ class Dadsoo_Agax_Comment
             'comment_author_email' => $email,
             'comment_content' => $comment,
             'comment_parent' => $parent_id,
-        ), $depth, __('Your reply has been posted and published.', 'dadsoo-agax-comment'), __('Your reply has been submitted and will appear after approval.', 'dadsoo-agax-comment'));
+        ), $depth, __('Your reply has been posted and published.', 'dadsoo-ajax-comment'), __('Your reply has been submitted and will appear after approval.', 'dadsoo-ajax-comment'));
     }
 
     /**
@@ -764,7 +784,7 @@ class Dadsoo_Agax_Comment
         }
 
         if (!$comment_id) {
-            wp_send_json_error(__('There was an error saving your comment. Please try again.', 'dadsoo-agax-comment'));
+            wp_send_json_error(__('There was an error saving your comment. Please try again.', 'dadsoo-ajax-comment'));
         }
 
         $comment = get_comment($comment_id);
@@ -795,7 +815,7 @@ class Dadsoo_Agax_Comment
         $items = $this->sanitize_items(isset($_POST['items']) ? wp_unslash($_POST['items']) : 5); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
         if (!$post_id || !get_post($post_id)) {
-            wp_send_json_error(__('Invalid post.', 'dadsoo-agax-comment'), 400);
+            wp_send_json_error(__('Invalid post.', 'dadsoo-ajax-comment'), 400);
         }
 
         // نانس در ابتدای هر دو تابع فراخوان‌کننده بررسی شده؛ sanitize_vote_icons() و
@@ -894,26 +914,28 @@ class Dadsoo_Agax_Comment
             return;
         }
 
-        require_once plugin_dir_path(DADSOO_AGAX_COMMENT_FILE) . 'includes/class-dadsoo-agax-elementor-form-widget.php';
-        require_once plugin_dir_path(DADSOO_AGAX_COMMENT_FILE) . 'includes/class-dadsoo-agax-elementor-comments-widget.php';
-        require_once plugin_dir_path(DADSOO_AGAX_COMMENT_FILE) . 'includes/class-dadsoo-agax-legacy-widgets.php';
+        require_once plugin_dir_path(DADSOO_AJAX_COMMENT_FILE) . 'includes/class-dadsoo-ajax-elementor-form-widget.php';
+        require_once plugin_dir_path(DADSOO_AJAX_COMMENT_FILE) . 'includes/class-dadsoo-ajax-elementor-comments-widget.php';
+        require_once plugin_dir_path(DADSOO_AJAX_COMMENT_FILE) . 'includes/class-dadsoo-ajax-legacy-widgets.php';
 
-        $widgets_manager->register(new Dadsoo_Agax_Elementor_Form_Widget());
-        $widgets_manager->register(new Dadsoo_Agax_Elementor_Comments_Widget());
+        $widgets_manager->register(new Dadsoo_Ajax_Elementor_Form_Widget());
+        $widgets_manager->register(new Dadsoo_Ajax_Elementor_Comments_Widget());
 
-        // صفحه‌هایی که با نسخه‌های elinweb ساخته شده‌اند هنوز نام قدیمی ویجت را ذخیره دارند.
+        // صفحه‌هایی که با نسخه‌های پیشین ساخته شده‌اند هنوز نام قدیمی ویجت را ذخیره دارند.
         $widgets_manager->register(new Dadsoo_Agax_Legacy_Form_Widget());
         $widgets_manager->register(new Dadsoo_Agax_Legacy_Comments_Widget());
+        $widgets_manager->register(new Dadsoo_Elinweb_Legacy_Form_Widget());
+        $widgets_manager->register(new Dadsoo_Elinweb_Legacy_Comments_Widget());
     }
 
     public function add_admin_menu()
     {
         add_submenu_page(
             'options-general.php',
-            __('Dadsoo Agax Comment Settings', 'dadsoo-agax-comment'),
-            __('Dadsoo Agax Comment', 'dadsoo-agax-comment'),
+            __('Dadsoo Ajax Comment Settings', 'dadsoo-ajax-comment'),
+            __('Dadsoo Ajax Comment', 'dadsoo-ajax-comment'),
             'manage_options',
-            'dadsoo-agax-comment-settings',
+            'dadsoo-ajax-comment-settings',
             array($this, 'render_settings_page')
         );
     }
@@ -922,44 +944,56 @@ class Dadsoo_Agax_Comment
     {
     ?>
         <div class="wrap">
-            <h1><?php esc_html_e('Dadsoo Agax Comment Settings', 'dadsoo-agax-comment'); ?></h1>
+            <h1><?php esc_html_e('Dadsoo Ajax Comment Settings', 'dadsoo-ajax-comment'); ?></h1>
             <div class="dadsoo-settings-content">
-                <h2><?php esc_html_e('How to use', 'dadsoo-agax-comment'); ?></h2>
-                <p><?php esc_html_e('Use the following shortcode to display the comment form:', 'dadsoo-agax-comment'); ?></p>
-                <code>[dadsoo-agax-comment-form]</code>
+                <h2><?php esc_html_e('How to use', 'dadsoo-ajax-comment'); ?></h2>
+                <p><?php esc_html_e('Use the following shortcode to display the comment form:', 'dadsoo-ajax-comment'); ?></p>
+                <code>[dadsoo-ajax-comment-form]</code>
 
-                <p><?php esc_html_e('Use the following shortcode to display the comments list:', 'dadsoo-agax-comment'); ?></p>
-                <code>[dadsoo-agax-comments]</code>
-                <p><?php esc_html_e('Or set the number of comments shown:', 'dadsoo-agax-comment'); ?></p>
-                <code>[dadsoo-agax-comments items="10" avatar_size="72"]</code>
+                <p><?php esc_html_e('Use the following shortcode to display the comments list:', 'dadsoo-ajax-comment'); ?></p>
+                <code>[dadsoo-ajax-comments]</code>
+                <p><?php esc_html_e('Or set the number of comments shown:', 'dadsoo-ajax-comment'); ?></p>
+                <code>[dadsoo-ajax-comments items="10" avatar_size="72"]</code>
 
-                <p><?php esc_html_e('The elin-agax-comment-form and elin-agax-comments shortcodes still work, but are deprecated.', 'dadsoo-agax-comment'); ?></p>
+                <p><?php esc_html_e('The dadsoo-agax-comment-form/dadsoo-agax-comments and elin-agax-comment-form/elin-agax-comments shortcodes still work, but are deprecated.', 'dadsoo-ajax-comment'); ?></p>
             </div>
         </div>
 <?php
     }
 }
 
-function dadsoo_agax_comment()
+function dadsoo_ajax_comment()
 {
     static $plugin = null;
     if (null === $plugin) {
-        $plugin = new Dadsoo_Agax_Comment();
+        $plugin = new Dadsoo_Ajax_Comment();
     }
 
     return $plugin;
 }
 
-dadsoo_agax_comment();
+dadsoo_ajax_comment();
+
+if (!function_exists('dadsoo_agax_comment')) {
+    /**
+     * نام قبلی تابع (با غلط تایپیِ agax)، برای کدهای بیرونی که هنوز آن را صدا می‌زنند.
+     *
+     * @deprecated 4.0.0 از dadsoo_ajax_comment() استفاده کنید.
+     */
+    function dadsoo_agax_comment()
+    {
+        return dadsoo_ajax_comment();
+    }
+}
 
 if (!function_exists('elinweb_agax_comment')) {
     /**
-     * نام قدیمی تابع، برای کدهای بیرونی که هنوز آن را صدا می‌زنند.
+     * نام قدیمی‌تر تابع، برای کدهای بیرونی که هنوز آن را صدا می‌زنند.
      *
-     * @deprecated 3.0.0 از dadsoo_agax_comment() استفاده کنید.
+     * @deprecated 3.0.0 از dadsoo_ajax_comment() استفاده کنید.
      */
     function elinweb_agax_comment()
     {
-        return dadsoo_agax_comment();
+        return dadsoo_ajax_comment();
     }
 }

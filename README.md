@@ -1,4 +1,4 @@
-# Dadsoo Agax Comment
+# Dadsoo Ajax Comment
 
 افزونهٔ سبک وردپرس برای نمایش و مدیریت فرم و فهرست دیدگاه‌های سفارشی با رابط کاربری AJAX.
 
@@ -28,16 +28,16 @@
 
 ## نصب
 
-1. پوشهٔ افزونه را در `wp-content/plugins/dadsoo-agax-comment` قرار دهید.
+1. پوشهٔ افزونه را در `wp-content/plugins/dadsoo-ajax-comment` قرار دهید.
 2. افزونه را از بخش «افزونه‌ها» در پیشخوان وردپرس فعال کنید.
 3. در برگه یا قالب موردنظر از شورت‌کدهای زیر استفاده کنید:
 
    ```text
-   [dadsoo-agax-comment-form]
-   [dadsoo-agax-comments]
-   [dadsoo-agax-comments items="10"]
-   [dadsoo-agax-comments items="10" avatar_size="72"]
-   [dadsoo-agax-comments load_more_text="نظرات بیشتر" loading_text="کمی صبر کنید" empty_text="اولین نظر را شما بنویسید"]
+   [dadsoo-ajax-comment-form]
+   [dadsoo-ajax-comments]
+   [dadsoo-ajax-comments items="10"]
+   [dadsoo-ajax-comments items="10" avatar_size="72"]
+   [dadsoo-ajax-comments load_more_text="نظرات بیشتر" loading_text="کمی صبر کنید" empty_text="اولین نظر را شما بنویسید"]
    ```
 
 دیدگاه‌ها و پاسخ‌های کاربران مهمان با وضعیت «در انتظار تأیید» ثبت می‌شوند و از بخش دیدگاه‌های وردپرس قابل مدیریت هستند. کاربرانی که دسترسی `moderate_comments` دارند (مدیر و ویراستار) دیدگاهشان بلافاصله منتشر و بدون بارگذاری دوبارهٔ صفحه در فهرست نمایش داده می‌شود.
@@ -46,8 +46,8 @@
 
 پس از نصب Elementor، در دستهٔ General دو ویجت با نام‌های زیر در دسترس‌اند:
 
-- `Dadsoo Agax Comment Form` برای فرم ارسال نظر
-- `Dadsoo Agax Comments` برای فهرست نظرات
+- `Dadsoo Ajax Comment Form` برای فرم ارسال نظر
+- `Dadsoo Ajax Comments` برای فهرست نظرات
 
 کنترل‌های ویجت فهرست:
 
@@ -100,21 +100,40 @@ wp eval-file tests/integration-smoke.php --path=<wordpress-path>
 
 چون نام فایل اصلی افزونه از `elin-agax-comment.php` به `dadsoo-agax-comment.php` تغییر کرده، وردپرس افزونه را غیرفعال می‌کند؛ پس از به‌روزرسانی یک‌بار آن را از بخش «افزونه‌ها» فعال کنید.
 
-اگر جاوااسکریپت افزونه را سفارشی کرده‌اید، شیء سراسری `elinwebAgaxComment` حالا `dadsooAgaxComment` نام دارد و کلاس‌های CSS آیکون از `elinweb-*` به `dadsoo-*` تغییر کرده‌اند.
+اگر جاوااسکریپت افزونه را سفارشی کرده‌اید، شیء سراسری `elinwebAgaxComment` حالا `dadsooAjaxComment` نام دارد (در نسخهٔ ۳٫x به‌اشتباه `dadsooAgaxComment` بود؛ به بخش زیر نگاه کنید) و کلاس‌های CSS آیکون از `elinweb-*` به `dadsoo-*` تغییر کرده‌اند.
+
+## رفع غلط تایپی agax → ajax (نسخهٔ ۴٫۰)
+
+نسخه‌های ۳٫x به‌اشتباه از «agax» به‌جای «ajax» در همهٔ شناسه‌ها استفاده می‌کردند (میراث نام قدیمی‌تر افزونه). نسخهٔ ۴٫۰ این را در همه‌جا اصلاح کرده: نام پوشه و فایل اصلی، نام کلاس، اکشن‌های AJAX، nonce، کلیدهای متا، کوکی‌ها، شورت‌کدها، نام ویجت‌های Elementor، دامنهٔ ترجمه و شیء سراسری جاوااسکریپت. برای اینکه سایت‌های موجود از کار نیفتند:
+
+| مورد | وضعیت |
+| --- | --- |
+| متای `dadsoo_agax_likes`/`dislikes` و پیشوند رأی `dadsoo_agax_vote_*` | هنگام اولین بارگذاری افزونه به‌صورت خودکار به `dadsoo_ajax_*` منتقل می‌شوند |
+| رأی‌هایی که فقط در کوکی `dadsoo_agax_vote_*` بودند | مثل نسخه‌های قبل، یک‌بار خوانده می‌شوند |
+| شورت‌کدهای `[dadsoo-agax-comment-form]` و `[dadsoo-agax-comments]` | هنوز کار می‌کنند (منسوخ) |
+| ویجت‌های Elementor با نام `dadsoo-agax-*` | هنوز رندر می‌شوند ولی در پنل ویجت‌ها نمایش داده نمی‌شوند |
+| تابع `dadsoo_agax_comment()` | به `dadsoo_ajax_comment()` نگاشت شده است |
+
+**نام پوشهٔ افزونه هم از `dadsoo-agax-comment` به `dadsoo-ajax-comment` تغییر کرده** — این فراتر از تغییر نام فایل داخلی است. برای به‌روزرسانی یک نصب موجود:
+
+1. افزونهٔ قدیمی را از پیشخوان غیرفعال کنید (لازم نیست حذف کنید؛ متا و کوکی‌ها در دیتابیس می‌مانند).
+2. پوشهٔ جدید (`dadsoo-ajax-comment`) را در `wp-content/plugins/` قرار دهید.
+3. افزونهٔ جدید را فعال کنید. مهاجرت دادهٔ بالا خودکار در همان لحظهٔ فعال‌سازی اجرا می‌شود.
+4. پوشهٔ قدیمی (`dadsoo-agax-comment`) را می‌توانید حذف کنید.
 
 ## توسعه
 
-فایل اصلی افزونه `dadsoo-agax-comment.php` است. استایل‌ها و رفتار سمت مرورگر به‌ترتیب در `assets/css/style.css` و `assets/js/script.js` قرار دارند. توسعه و نگهداری پروژه توسط [Elinweb](https://elinweb.ir) انجام می‌شود.
+فایل اصلی افزونه `dadsoo-ajax-comment.php` است. استایل‌ها و رفتار سمت مرورگر به‌ترتیب در `assets/css/style.css` و `assets/js/script.js` قرار دارند. توسعه و نگهداری پروژه توسط [Elinweb](https://elinweb.ir) انجام می‌شود.
 
 ## زبان و ترجمه
 
-از نسخهٔ ۳٫۲٫۰، رشته‌های مبدأ افزونه (داخل `__()`/`_e()`) انگلیسی‌اند تا با قواعد مخزن وردپرس هم‌خوان باشند. ترجمهٔ کامل فارسی در `languages/dadsoo-agax-comment-fa_IR.po` و `.mo` قرار دارد و روی سایت‌هایی که locale آن‌ها `fa_IR` است (مثل خودِ dadsoo.com) به‌صورت خودکار بارگذاری می‌شود؛ ظاهر افزونه برای کاربر نهایی هیچ تغییری نمی‌کند. فایل `languages/dadsoo-agax-comment.pot` هم برای ساخت ترجمه‌های دیگر زبان‌ها آماده است.
+از نسخهٔ ۳٫۲٫۰، رشته‌های مبدأ افزونه (داخل `__()`/`_e()`) انگلیسی‌اند تا با قواعد مخزن وردپرس هم‌خوان باشند. ترجمهٔ کامل فارسی در `languages/dadsoo-ajax-comment-fa_IR.po` و `.mo` قرار دارد و روی سایت‌هایی که locale آن‌ها `fa_IR` است (مثل خودِ dadsoo.com) به‌صورت خودکار بارگذاری می‌شود؛ ظاهر افزونه برای کاربر نهایی هیچ تغییری نمی‌کند. فایل `languages/dadsoo-ajax-comment.pot` هم برای ساخت ترجمه‌های دیگر زبان‌ها آماده است.
 
 برای به‌روزرسانی ترجمهٔ فارسی پس از تغییر متن‌ها:
 
 ```text
-wp i18n make-pot . languages/dadsoo-agax-comment.pot --domain=dadsoo-agax-comment --exclude=tests,languages
-wp i18n make-mo languages/dadsoo-agax-comment-fa_IR.po languages/
+wp i18n make-pot . languages/dadsoo-ajax-comment.pot --domain=dadsoo-ajax-comment --exclude=tests,languages
+wp i18n make-mo languages/dadsoo-ajax-comment-fa_IR.po languages/
 ```
 
 ## انتشار در مخزن وردپرس

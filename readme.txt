@@ -1,10 +1,10 @@
-=== Dadsoo Agax Comment ===
+=== Dadsoo Ajax Comment ===
 Contributors: ishadmehri
 Tags: comments, ajax, threaded comments, elementor, voting
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.2.0
+Stable tag: 4.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ AJAX-powered comments with threaded replies, like/dislike voting, and full Eleme
 
 == Description ==
 
-Dadsoo Agax Comment replaces the default comment form and list with an AJAX-driven version: comments post without a page reload, replies nest up to three levels deep, and visitors can like or dislike any comment.
+Dadsoo Ajax Comment replaces the default comment form and list with an AJAX-driven version: comments post without a page reload, replies nest up to three levels deep, and visitors can like or dislike any comment.
 
 = Features =
 
@@ -31,10 +31,10 @@ Dadsoo Agax Comment replaces the default comment form and list with an AJAX-driv
 
 = Shortcodes =
 
-`[dadsoo-agax-comment-form]`
-`[dadsoo-agax-comments]`
-`[dadsoo-agax-comments items="10" avatar_size="72"]`
-`[dadsoo-agax-comments load_more_text="More comments" loading_text="One moment…" empty_text="Be the first to comment"]`
+`[dadsoo-ajax-comment-form]`
+`[dadsoo-ajax-comments]`
+`[dadsoo-ajax-comments items="10" avatar_size="72"]`
+`[dadsoo-ajax-comments load_more_text="More comments" loading_text="One moment…" empty_text="Be the first to comment"]`
 
 Guest comments and replies are saved as pending and can be moderated from the regular Comments screen. Users with the `moderate_comments` capability (Administrators and Editors) have their comments published immediately and shown in the list without a page reload.
 
@@ -46,9 +46,9 @@ Guest comments and replies are saved as pending and can be moderated from the re
 
 == Installation ==
 
-1. Upload the plugin folder to `/wp-content/plugins/dadsoo-agax-comment`, or install it through Plugins → Add New.
+1. Upload the plugin folder to `/wp-content/plugins/dadsoo-ajax-comment`, or install it through Plugins → Add New.
 2. Activate the plugin through the Plugins screen.
-3. Add the shortcodes above to any page or template, or drag the two Elementor widgets ("Dadsoo Agax Comment Form" and "Dadsoo Agax Comments") onto a page.
+3. Add the shortcodes above to any page or template, or drag the two Elementor widgets ("Dadsoo Ajax Comment Form" and "Dadsoo Ajax Comments") onto a page.
 
 == Frequently Asked Questions ==
 
@@ -72,7 +72,14 @@ Yes. The shortcodes work with any theme or page builder. Elementor is only requi
 
 Source strings are in English. A Persian (fa_IR) translation ships in the `languages` folder.
 
+= I have an older "Dadsoo Agax Comment" install. Is this the same plugin? =
+
+Yes — versions before 4.0 shipped with "agax" instead of "ajax" in every identifier (a leftover typo from an earlier name). 4.0 corrects it. See the Upgrade Notice below; existing votes, comments, and content using the old shortcodes are carried over automatically.
+
 == Changelog ==
+
+= 4.0.0 =
+* Corrected a long-standing "agax" typo (should have read "ajax") throughout every identifier: plugin slug and main file, class name, AJAX actions, nonce, meta keys, cookies, shortcodes, Elementor widget names, text domain, and the JS global. Existing data (vote records, like/dislike counts) is migrated automatically, and the old `dadsoo-agax-*` shortcodes/widgets keep working.
 
 = 3.2.0 =
 * All strings now ship in English by default; a Persian (fa_IR) translation is bundled in `languages/`.
@@ -104,6 +111,9 @@ Source strings are in English. A Persian (fa_IR) translation ships in the `langu
 * Initial public documentation and Elementor widgets.
 
 == Upgrade Notice ==
+
+= 4.0.0 =
+The plugin folder and main file are renamed (agax → ajax typo fix). Deactivate the old "Dadsoo Agax Comment" install, install this one, and activate it — votes, comment data, and old shortcodes/widgets carry over automatically.
 
 = 3.2.0 =
 Default plugin strings are now in English; a Persian translation ships in languages/. No action needed if you don't customize the plugin's text.

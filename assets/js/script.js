@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-    var settings = window.dadsooAgaxComment || {};
+    var settings = window.dadsooAjaxComment || {};
     var i18n = settings.i18n || {};
 
     // نزدیک‌ترین فهرست نظرات به یک عنصر؛ اگر فرم بیرون از فهرست باشد اولین فهرست صفحه استفاده می‌شود.
@@ -102,7 +102,7 @@ jQuery(document).ready(function ($) {
                 formData[this.name] = $(this).val();
             }
         });
-        formData.action = 'dadsoo_agax_submit_comment';
+        formData.action = 'dadsoo_ajax_submit_comment';
 
         if ($container.length) {
             $.extend(formData, iconsFor($container));
@@ -186,7 +186,7 @@ jQuery(document).ready(function ($) {
                 url: settings.ajaxurl,
                 type: 'POST',
                 data: $.extend({
-                    action: 'dadsoo_agax_load_comments',
+                    action: 'dadsoo_ajax_load_comments',
                     post_id: postId,
                     offset: $container.data('offset') || 0,
                     items: itemsPerPage,
@@ -260,7 +260,7 @@ jQuery(document).ready(function ($) {
             url: settings.ajaxurl,
             type: 'POST',
             data: {
-                action: 'dadsoo_agax_comment_vote',
+                action: 'dadsoo_ajax_comment_vote',
                 comment_id: $button.attr('data-comment-id'),
                 vote_type: $button.attr('data-vote'),
                 _wpnonce: settings.nonce
@@ -335,7 +335,7 @@ jQuery(document).ready(function ($) {
         // شناسهٔ پست از خود فهرست نظرات خوانده می‌شود؛ فرم ارسال نظر ممکن است در صفحه نباشد.
         var postId = commentsContainerFor($button).attr('data-post-id') || '';
         var commentId = $button.attr('data-comment-id');
-        var honeypot = settings.honeypot || 'dadsoo_agax_confirm';
+        var honeypot = settings.honeypot || 'dadsoo_ajax_confirm';
 
         $replyForm.html(
             '<form class="dadsoo-reply-form-inner">' +
@@ -367,7 +367,7 @@ jQuery(document).ready(function ($) {
         var $container = commentsContainerFor($comment);
 
         var data = $.extend({
-            action: 'dadsoo_agax_reply_comment',
+            action: 'dadsoo_ajax_reply_comment',
             _wpnonce: settings.nonce
         }, iconsFor($container));
 

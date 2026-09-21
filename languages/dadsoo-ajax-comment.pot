@@ -1,0 +1,358 @@
+# Copyright (C) 2026 Iman Shadmehri
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Dadsoo Ajax Comment 4.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/dadsoo-ajax-comment\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-09-21T06:17:38+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: dadsoo-ajax-comment\n"
+
+#. Plugin Name of the plugin
+#: dadsoo-ajax-comment.php
+#: dadsoo-ajax-comment.php:936
+msgid "Dadsoo Ajax Comment"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: dadsoo-ajax-comment.php
+msgid "https://elinweb.ir"
+msgstr ""
+
+#. Description of the plugin
+#: dadsoo-ajax-comment.php
+msgid "Advanced AJAX comment system with threaded replies, like/dislike voting, and full moderation control."
+msgstr ""
+
+#. Author of the plugin
+#: dadsoo-ajax-comment.php
+msgid "Iman Shadmehri"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:151
+msgid "Your comment has been saved."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:152
+msgid "There was an error saving your comment."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:153
+msgid "Your reply has been saved."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:154
+msgid "There was an error saving your reply."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:155
+msgid "A server error occurred. Please try again."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:156
+msgid "Full name"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:157
+#: dadsoo-ajax-comment.php:201
+msgid "Email"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:158
+msgid "Your reply"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:159
+msgid "Post reply"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:160
+msgid "Cancel"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:197
+msgid "Full name*"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:205
+msgid "Your comment*"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:220
+msgid "Post comment"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:236
+msgid "Leave this field empty"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:248
+#: dadsoo-ajax-comment.php:262
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:67
+msgid "Load more comments"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:249
+#: dadsoo-ajax-comment.php:260
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:74
+msgid "Loading comments…"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:250
+#: dadsoo-ajax-comment.php:261
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:81
+msgid "No comments yet."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:399
+msgid "Reply"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:429
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:157
+msgid "Like"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:430
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:158
+msgid "Dislike"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:620
+msgid "Invalid vote or comment."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:682
+msgid "Security check failed. Please refresh the page and try again."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:691
+#: dadsoo-ajax-comment.php:734
+msgid "Invalid request."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:695
+msgid "Name must be at least 2 characters."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:699
+msgid "Comment must be at least 5 characters."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:703
+#: dadsoo-ajax-comment.php:742
+msgid "The email address is not valid."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:707
+#: dadsoo-ajax-comment.php:818
+msgid "Invalid post."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:711
+msgid "Comments are closed for this post."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:720
+msgid "Your comment has been posted and published."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:720
+msgid "Your comment has been submitted and will appear after approval."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:738
+msgid "Please enter your name and reply."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:747
+msgid "Invalid parent comment or post."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:754
+msgid "Replies are not allowed at this depth."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:763
+msgid "Your reply has been posted and published."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:763
+msgid "Your reply has been submitted and will appear after approval."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:787
+msgid "There was an error saving your comment. Please try again."
+msgstr ""
+
+#: dadsoo-ajax-comment.php:935
+#: dadsoo-ajax-comment.php:947
+msgid "Dadsoo Ajax Comment Settings"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:949
+msgid "How to use"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:950
+msgid "Use the following shortcode to display the comment form:"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:953
+msgid "Use the following shortcode to display the comments list:"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:955
+msgid "Or set the number of comments shown:"
+msgstr ""
+
+#: dadsoo-ajax-comment.php:958
+msgid "The dadsoo-agax-comment-form/dadsoo-agax-comments and elin-agax-comment-form/elin-agax-comments shortcodes still work, but are deprecated."
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:21
+msgid "Dadsoo Ajax Comments"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:52
+msgid "List Settings"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:57
+msgid "Comments per initial load"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:65
+msgid "Load more button text"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:72
+msgid "Loading state text"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:79
+msgid "Empty state text"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:88
+msgid "Vote Icons"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:93
+msgid "Like, inactive state"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:98
+msgid "Like, active state"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:103
+msgid "Dislike, inactive state"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:108
+msgid "Dislike, active state"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:116
+msgid "Author"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:120
+msgid "Avatar size"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:126
+msgid "Avatar border radius"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:132
+msgid "Author name color"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:143
+msgid "Comment Text"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:147
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:181
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:194
+msgid "Text color"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:168
+msgid "Load More"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:179
+msgid "Normal"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:186
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:199
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:313
+msgid "Background color"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:192
+msgid "Hover"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:214
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:284
+msgid "Padding"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:223
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:294
+msgid "Border radius"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:232
+msgid "Loading & empty state message"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:238
+msgid "Text & spinner color"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:249
+msgid "New comments indicator"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:255
+msgid "Flash color"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:263
+msgid "Scroll offset from top"
+msgstr ""
+
+#. translators: %s: like or dislike.
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:278
+#, php-format
+msgid "%s Button"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:303
+msgid "Inactive (Outline)"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:303
+msgid "Active (Fill)"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-comments-widget.php:308
+msgid "Icon color"
+msgstr ""
+
+#: includes/class-dadsoo-ajax-elementor-form-widget.php:21
+msgid "Dadsoo Ajax Comment Form"
+msgstr ""
