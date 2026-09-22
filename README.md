@@ -142,8 +142,10 @@ wp i18n make-mo languages/dadsoo-ajax-comment-fa_IR.po languages/
 
 فایل `readme.txt` (فرمت استاندارد مخزن وردپرس، به انگلیسی) در ریشهٔ افزونه آماده است. پیش از ارسال:
 
-1. مقدار `Contributors` در `readme.txt` را با نام کاربری واقعی حساب wordpress.org جایگزین کنید (اکنون `ishadmehri` است، فقط یک پیش‌فرض).
+1. مقدار `Contributors` در `readme.txt` با نام کاربری واقعی حساب wordpress.org (`imansh`) تنظیم شده است.
 2. افزونهٔ رسمی [Plugin Check](https://wordpress.org/plugins/plugin-check/) را روی نسخهٔ نهایی اجرا کنید؛ در زمان نگارش این سند، تنها دو هشدار کم‌اهمیت باقی مانده‌اند (فایل `.gitignore` که در بستهٔ نهایی نیست، و فراخوانی عمدی `load_plugin_textdomain()` برای پشتیبانی از نصب خارج از مخزن وردپرس).
 3. زیپ نهایی را بدون `tests/`، `.git`، `.gitignore` و سایر فایل‌های پنهان از <https://wordpress.org/plugins/developers/add/> ارسال کنید.
 
 مجوز انتشار GPL v2 یا بالاتر است (فیلدهای `License`/`License URI` در سرتیتر افزونه و در `readme.txt`).
+
+نام انگلیسی: **Dadsoo Ajax Comment** · نویسنده: **ایمان شادمهری** · حساب وردپرس: [imansh](https://profiles.wordpress.org/imansh/) · [الین وب](https://elinweb.ir)

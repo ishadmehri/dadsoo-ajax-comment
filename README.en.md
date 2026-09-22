@@ -142,8 +142,10 @@ wp i18n make-mo languages/dadsoo-ajax-comment-fa_IR.po languages/
 
 A `readme.txt` (the WordPress.org standard format) is ready at the plugin root. Before submitting:
 
-1. Replace the `Contributors` value in `readme.txt` with the real wordpress.org account username (it currently reads `ishadmehri`, a placeholder).
+1. The `Contributors` value in `readme.txt` is set to the real wordpress.org account username (`imansh`).
 2. Run the official [Plugin Check](https://wordpress.org/plugins/plugin-check/) plugin against the final build. As of this writing, only two low-severity warnings remain (the `.gitignore` file, which isn't part of the shipped zip, and the deliberate `load_plugin_textdomain()` call kept for installs outside the WordPress.org directory).
 3. Submit the final zip — without `tests/`, `.git`, `.gitignore`, or other hidden files — at <https://wordpress.org/plugins/developers/add/>.
 
 The license is GPL v2 or later (the `License`/`License URI` fields in the plugin header and in `readme.txt`).
+
+Author: **Iman Shadmehri** · WordPress.org account: [imansh](https://profiles.wordpress.org/imansh/) · [Elinweb](https://elinweb.ir)

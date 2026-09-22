@@ -1,5 +1,5 @@
 === Dadsoo Ajax Comment ===
-Contributors: ishadmehri
+Contributors: imansh
 Tags: comments, ajax, threaded comments, elementor, voting
 Requires at least: 5.8
 Tested up to: 7.1
@@ -43,6 +43,8 @@ Guest comments and replies are saved as pending and can be moderated from the re
 * WordPress 5.8 or newer
 * PHP 7.4 or newer
 * Elementor (only if you use the widgets — the shortcodes don't need it)
+
+Author: Iman Shadmehri. Website: https://elinweb.ir
 
 == Installation ==
 
