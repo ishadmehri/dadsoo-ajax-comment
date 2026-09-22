@@ -1,3 +1,5 @@
+![Dadsoo Ajax Comment](.wordpress-org/banner-1544x500.png)
+
 # Dadsoo Ajax Comment
 
 English | [فارسی](README.md)
@@ -145,6 +147,26 @@ A `readme.txt` (the WordPress.org standard format) is ready at the plugin root. 
 1. The `Contributors` value in `readme.txt` is set to the real wordpress.org account username (`imansh`).
 2. Run the official [Plugin Check](https://wordpress.org/plugins/plugin-check/) plugin against the final build. As of this writing, only two low-severity warnings remain (the `.gitignore` file, which isn't part of the shipped zip, and the deliberate `load_plugin_textdomain()` call kept for installs outside the WordPress.org directory).
 3. Submit the final zip — without `tests/`, `.git`, `.gitignore`, `README.en.md` (Plugin Check only accepts `README.md`/`readme.txt`/`LICENSE(.md)`/`CHANGELOG.md`/`CONTRIBUTING.md`/`SECURITY.md` at the plugin root), or other hidden files — at <https://wordpress.org/plugins/developers/add/>. `README.en.md` stays in the GitHub repo only.
+
+### Plugin Page Banner and Icon
+
+The plugin page's display assets (not part of the plugin's code) live in `.wordpress-org/`:
+
+| File | Size | Use |
+| --- | --- | --- |
+| `banner-1544x500.png` | 1544×500 | Plugin page header banner (retina) |
+| `banner-772x250.png` | 772×250 | Standard banner |
+| `icon.svg` | Scalable | Plugin icon in listings and the detail page (SVG alone is sufficient — no separate PNG needed) |
+| `logo.svg` | Scalable | Full logo (icon + name), for external use such as this README only |
+
+This folder is not part of the plugin's code and isn't included in the zip submitted to WordPress.org. The directory reads these files from the `assets/` folder in SVN — **that folder is only created after the plugin's initial approval.** After approval:
+
+```text
+svn co https://plugins.svn.wordpress.org/dadsoo-ajax-comment
+cp .wordpress-org/banner-*.png .wordpress-org/icon.svg dadsoo-ajax-comment/assets/
+svn add dadsoo-ajax-comment/assets/*
+svn commit -m "Add plugin page banner and icon" dadsoo-ajax-comment
+```
 
 The license is GPL v2 or later (the `License`/`License URI` fields in the plugin header and in `readme.txt`).
 

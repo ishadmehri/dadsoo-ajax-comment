@@ -1,3 +1,5 @@
+![Dadsoo Ajax Comment](.wordpress-org/banner-1544x500.png)
+
 # Dadsoo Ajax Comment
 
 [English](README.en.md) | فارسی
@@ -145,6 +147,26 @@ wp i18n make-mo languages/dadsoo-ajax-comment-fa_IR.po languages/
 1. مقدار `Contributors` در `readme.txt` با نام کاربری واقعی حساب wordpress.org (`imansh`) تنظیم شده است.
 2. افزونهٔ رسمی [Plugin Check](https://wordpress.org/plugins/plugin-check/) را روی نسخهٔ نهایی اجرا کنید؛ در زمان نگارش این سند، تنها دو هشدار کم‌اهمیت باقی مانده‌اند (فایل `.gitignore` که در بستهٔ نهایی نیست، و فراخوانی عمدی `load_plugin_textdomain()` برای پشتیبانی از نصب خارج از مخزن وردپرس).
 3. زیپ نهایی را بدون `tests/`، `.git`، `.gitignore`، `README.en.md` (Plugin Check فقط `README.md`/`readme.txt`/`LICENSE(.md)`/`CHANGELOG.md`/`CONTRIBUTING.md`/`SECURITY.md` را در ریشه می‌پذیرد) و سایر فایل‌های پنهان از <https://wordpress.org/plugins/developers/add/> ارسال کنید. `README.en.md` فقط در مخزن گیت‌هاب می‌ماند.
+
+### بنر و آیکون صفحهٔ افزونه
+
+فایل‌های نمایشی صفحهٔ افزونه (نه بخشی از کد افزونه) در پوشهٔ `.wordpress-org/` قرار دارند:
+
+| فایل | ابعاد | کاربرد |
+| --- | --- | --- |
+| `banner-1544x500.png` | ۱۵۴۴×۵۰۰ | بنر بالای صفحهٔ افزونه (رتینا) |
+| `banner-772x250.png` | ۷۷۲×۲۵۰ | بنر استاندارد |
+| `icon.svg` | مقیاس‌پذیر | آیکون افزونه در فهرست و صفحهٔ جزئیات (SVG کافی است، نیازی به PNG جداگانه نیست) |
+| `logo.svg` | مقیاس‌پذیر | لوگوی کامل (آیکون + نام)، فقط برای استفادهٔ بیرونی مثل همین README |
+
+این پوشه بخشی از کد افزونه نیست و در زیپ ارسالی به مخزن وردپرس قرار نمی‌گیرد. مخزن وردپرس این فایل‌ها را از پوشهٔ `assets/` در SVN می‌خواند — **این پوشه فقط بعد از تأیید اولیهٔ افزونه ساخته می‌شود.** بعد از تأیید:
+
+```text
+svn co https://plugins.svn.wordpress.org/dadsoo-ajax-comment
+cp .wordpress-org/banner-*.png .wordpress-org/icon.svg dadsoo-ajax-comment/assets/
+svn add dadsoo-ajax-comment/assets/*
+svn commit -m "Add plugin page banner and icon" dadsoo-ajax-comment
+```
 
 مجوز انتشار GPL v2 یا بالاتر است (فیلدهای `License`/`License URI` در سرتیتر افزونه و در `readme.txt`).
 
