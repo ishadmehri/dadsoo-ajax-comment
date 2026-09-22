@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Dadsoo Ajax Comment
-Plugin URI: https://elinweb.ir
+Plugin URI: https://github.com/ishadmehri/dadsoo-ajax-comment
 Description: Advanced AJAX comment system with threaded replies, like/dislike voting, and full moderation control.
 Version: 4.0.0
 Author: Iman Shadmehri
