@@ -16,18 +16,18 @@ Dadsoo Ajax Comment replaces the default comment form and list with an AJAX-driv
 
 = Features =
 
-* Post comments without reloading the page
-* Progressive loading of approved comments, with a loading spinner and an empty state
-* Threaded replies up to three levels deep
-* Instant publishing for logged-in users with the `moderate_comments` capability
-* Like/dislike voting that can be changed or undone, recorded server-side so clearing cookies can't be used to vote again
-* After each "load more", the page scrolls to and highlights the first newly loaded comment
-* Configurable button and status text (load more, loading, empty)
-* Uses the WordPress avatar and displays the comment date
-* Records IP address and user agent for moderation and spam review
-* Nonce-verified AJAX requests, a honeypot field on both forms, and comments routed through WordPress's own `wp_new_comment()` so Akismet, comment flood control, and the disallowed-words list all still run
-* Two independent Elementor widgets: a comment form and a comments list
-* Elementor style controls for the avatar, author name, comment text, vote icons, and the load-more button
+* ✅ Post comments without reloading the page
+* ✅ Progressive loading of approved comments, with a loading spinner and an empty state
+* ✅ Threaded replies up to three levels deep
+* ✅ Instant publishing for logged-in users with the `moderate_comments` capability
+* ✅ Like/dislike voting that can be changed or undone, recorded server-side so clearing cookies can't be used to vote again
+* ✅ After each "load more", the page scrolls to and highlights the first newly loaded comment
+* ✅ Configurable button and status text (load more, loading, empty)
+* ✅ Uses the WordPress avatar and displays the comment date
+* ✅ Records IP address and user agent for moderation and spam review
+* ✅ Nonce-verified AJAX requests, a honeypot field on both forms, and comments routed through WordPress's own `wp_new_comment()` so Akismet, comment flood control, and the disallowed-words list all still run
+* ✅ Two independent Elementor widgets: a comment form and a comments list
+* ✅ Elementor style controls for the avatar, author name, comment text, vote icons, and the load-more button
 
 = Shortcodes =
 
