@@ -144,7 +144,7 @@ A `readme.txt` (the WordPress.org standard format) is ready at the plugin root. 
 
 1. The `Contributors` value in `readme.txt` is set to the real wordpress.org account username (`imansh`).
 2. Run the official [Plugin Check](https://wordpress.org/plugins/plugin-check/) plugin against the final build. As of this writing, only two low-severity warnings remain (the `.gitignore` file, which isn't part of the shipped zip, and the deliberate `load_plugin_textdomain()` call kept for installs outside the WordPress.org directory).
-3. Submit the final zip — without `tests/`, `.git`, `.gitignore`, or other hidden files — at <https://wordpress.org/plugins/developers/add/>.
+3. Submit the final zip — without `tests/`, `.git`, `.gitignore`, `README.en.md` (Plugin Check only accepts `README.md`/`readme.txt`/`LICENSE(.md)`/`CHANGELOG.md`/`CONTRIBUTING.md`/`SECURITY.md` at the plugin root), or other hidden files — at <https://wordpress.org/plugins/developers/add/>. `README.en.md` stays in the GitHub repo only.
 
 The license is GPL v2 or later (the `License`/`License URI` fields in the plugin header and in `readme.txt`).
 

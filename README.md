@@ -144,7 +144,7 @@ wp i18n make-mo languages/dadsoo-ajax-comment-fa_IR.po languages/
 
 1. مقدار `Contributors` در `readme.txt` با نام کاربری واقعی حساب wordpress.org (`imansh`) تنظیم شده است.
 2. افزونهٔ رسمی [Plugin Check](https://wordpress.org/plugins/plugin-check/) را روی نسخهٔ نهایی اجرا کنید؛ در زمان نگارش این سند، تنها دو هشدار کم‌اهمیت باقی مانده‌اند (فایل `.gitignore` که در بستهٔ نهایی نیست، و فراخوانی عمدی `load_plugin_textdomain()` برای پشتیبانی از نصب خارج از مخزن وردپرس).
-3. زیپ نهایی را بدون `tests/`، `.git`، `.gitignore` و سایر فایل‌های پنهان از <https://wordpress.org/plugins/developers/add/> ارسال کنید.
+3. زیپ نهایی را بدون `tests/`، `.git`، `.gitignore`، `README.en.md` (Plugin Check فقط `README.md`/`readme.txt`/`LICENSE(.md)`/`CHANGELOG.md`/`CONTRIBUTING.md`/`SECURITY.md` را در ریشه می‌پذیرد) و سایر فایل‌های پنهان از <https://wordpress.org/plugins/developers/add/> ارسال کنید. `README.en.md` فقط در مخزن گیت‌هاب می‌ماند.
 
 مجوز انتشار GPL v2 یا بالاتر است (فیلدهای `License`/`License URI` در سرتیتر افزونه و در `readme.txt`).
 
