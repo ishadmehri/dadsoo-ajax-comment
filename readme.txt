@@ -4,7 +4,7 @@ Tags: comments, ajax, threaded comments, elementor, voting
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 4.0.0
+Stable tag: 4.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,13 +72,16 @@ Yes. The shortcodes work with any theme or page builder. Elementor is only requi
 
 = What language is the plugin in? =
 
-Source strings are in English. A Persian (fa_IR) translation ships in the `languages` folder.
+Source strings are in English. Translations, including Persian (fa_IR), are managed through [translate.wordpress.org](https://translate.wordpress.org/) and delivered automatically by WordPress — no files to install.
 
 = I have an older "Dadsoo Agax Comment" install. Is this the same plugin? =
 
 Yes — versions before 4.0 shipped with "agax" instead of "ajax" in every identifier (a leftover typo from an earlier name). 4.0 corrects it. See the Upgrade Notice below; existing votes, comments, and content using the old shortcodes are carried over automatically.
 
 == Changelog ==
+
+= 4.0.1 =
+* Removed the bundled `.po`/`.mo` translation files and the manual `load_plugin_textdomain()` call, per WordPress.org plugin review — WordPress.org-hosted plugins get this handled automatically via translate.wordpress.org.
 
 = 4.0.0 =
 * Corrected a long-standing "agax" typo (should have read "ajax") throughout every identifier: plugin slug and main file, class name, AJAX actions, nonce, meta keys, cookies, shortcodes, Elementor widget names, text domain, and the JS global. Existing data (vote records, like/dislike counts) is migrated automatically, and the old `dadsoo-agax-*` shortcodes/widgets keep working.

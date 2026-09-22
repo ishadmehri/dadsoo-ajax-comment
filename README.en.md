@@ -131,13 +131,21 @@ The plugin's main file is `dadsoo-ajax-comment.php`. Browser-side styles and beh
 
 ## Language and Translation
 
-As of version 3.2.0, the plugin's source strings (inside `__()`/`_e()`) are in English to match the WordPress.org plugin directory's conventions. A complete Persian translation lives in `languages/dadsoo-ajax-comment-fa_IR.po` and `.mo`, and loads automatically on sites whose locale is `fa_IR` (such as dadsoo.com itself) — the plugin's appearance for the end user doesn't change. `languages/dadsoo-ajax-comment.pot` is also ready as a base for translating into other languages.
+As of version 3.2.0, the plugin's source strings (inside `__()`/`_e()`) are in English. As of version 4.0.1, the plugin no longer ships any `.po`/`.mo` file or calls `load_plugin_textdomain()` — per WordPress.org plugin review feedback, a hosted plugin should leave translations entirely to [translate.wordpress.org](https://translate.wordpress.org/), which WordPress loads automatically as needed.
+
+The built Persian translation is kept at `translations/dadsoo-ajax-comment-fa_IR.po` and `.mo` (not part of the plugin package — reference only, and the source for a future GlotPress submission). `languages/dadsoo-ajax-comment.pot` stays in the plugin itself as the source template.
+
+**To keep a site such as dadsoo.com showing Persian before the official translation is approved**, drop the `.mo` file directly into WordPress's central language directory (not inside the plugin's own folder) — the same location WordPress core and the translation system both use:
+
+```text
+wp-content/languages/plugins/dadsoo-ajax-comment-fa_IR.mo
+```
 
 To update the Persian translation after changing strings:
 
 ```text
-wp i18n make-pot . languages/dadsoo-ajax-comment.pot --domain=dadsoo-ajax-comment --exclude=tests,languages
-wp i18n make-mo languages/dadsoo-ajax-comment-fa_IR.po languages/
+wp i18n make-pot . languages/dadsoo-ajax-comment.pot --domain=dadsoo-ajax-comment --exclude=tests,languages,translations
+wp i18n make-mo translations/dadsoo-ajax-comment-fa_IR.po translations/
 ```
 
 ## Publishing to the WordPress Plugin Directory

@@ -131,13 +131,21 @@ wp eval-file tests/integration-smoke.php --path=<wordpress-path>
 
 ## زبان و ترجمه
 
-از نسخهٔ ۳٫۲٫۰، رشته‌های مبدأ افزونه (داخل `__()`/`_e()`) انگلیسی‌اند تا با قواعد مخزن وردپرس هم‌خوان باشند. ترجمهٔ کامل فارسی در `languages/dadsoo-ajax-comment-fa_IR.po` و `.mo` قرار دارد و روی سایت‌هایی که locale آن‌ها `fa_IR` است (مثل خودِ dadsoo.com) به‌صورت خودکار بارگذاری می‌شود؛ ظاهر افزونه برای کاربر نهایی هیچ تغییری نمی‌کند. فایل `languages/dadsoo-ajax-comment.pot` هم برای ساخت ترجمه‌های دیگر زبان‌ها آماده است.
+از نسخهٔ ۳٫۲٫۰، رشته‌های مبدأ افزونه (داخل `__()`/`_e()`) انگلیسی‌اند. از نسخهٔ ۴٫۰٫۱، افزونه دیگر هیچ فایل `.po`/`.mo` را همراه خودش نمی‌فرستد و `load_plugin_textdomain()` هم صدا زده نمی‌شود — طبق بازخورد تیم بررسی مخزن وردپرس، افزونه‌های میزبانی‌شده باید ترجمه را کاملاً به [translate.wordpress.org](https://translate.wordpress.org/) بسپارند تا وردپرس خودش به‌محض نیاز بارگذاری‌شان کند.
+
+ترجمهٔ فارسیِ ساخته‌شده در `translations/dadsoo-ajax-comment-fa_IR.po` و `.mo` نگه داشته می‌شود (بخشی از بستهٔ افزونه نیست، فقط مرجع/برای ثبت در GlotPress). فایل `languages/dadsoo-ajax-comment.pot` هم به‌عنوان الگو در خودِ افزونه باقی می‌ماند.
+
+**برای اینکه سایتی مثل dadsoo.com تا قبل از تأیید شدن ترجمهٔ رسمی همچنان فارسی ببیند**، کافی است فایل `.mo` را مستقیم در پوشهٔ مرکزی زبان‌های وردپرس (نه داخل پوشهٔ خودِ افزونه) بگذارید — این همان مسیری است که خودِ وردپرس و مخزن ترجمه هم از آن استفاده می‌کنند:
+
+```text
+wp-content/languages/plugins/dadsoo-ajax-comment-fa_IR.mo
+```
 
 برای به‌روزرسانی ترجمهٔ فارسی پس از تغییر متن‌ها:
 
 ```text
-wp i18n make-pot . languages/dadsoo-ajax-comment.pot --domain=dadsoo-ajax-comment --exclude=tests,languages
-wp i18n make-mo languages/dadsoo-ajax-comment-fa_IR.po languages/
+wp i18n make-pot . languages/dadsoo-ajax-comment.pot --domain=dadsoo-ajax-comment --exclude=tests,languages,translations
+wp i18n make-mo translations/dadsoo-ajax-comment-fa_IR.po translations/
 ```
 
 ## انتشار در مخزن وردپرس

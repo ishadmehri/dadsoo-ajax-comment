@@ -3,7 +3,7 @@
 Plugin Name: Dadsoo Ajax Comment
 Plugin URI: https://github.com/ishadmehri/dadsoo-ajax-comment
 Description: Advanced AJAX comment system with threaded replies, like/dislike voting, and full moderation control.
-Version: 4.0.0
+Version: 4.0.1
 Author: Iman Shadmehri
 Author URI: https://elinweb.ir
 Requires at least: 5.8
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('DADSOO_AJAX_COMMENT_VERSION', '4.0.0');
+define('DADSOO_AJAX_COMMENT_VERSION', '4.0.1');
 define('DADSOO_AJAX_COMMENT_FILE', __FILE__);
 
 class Dadsoo_Ajax_Comment
@@ -48,7 +48,6 @@ class Dadsoo_Ajax_Comment
 
     public function __construct()
     {
-        add_action('plugins_loaded', array($this, 'load_textdomain'));
         add_action('plugins_loaded', array($this, 'maybe_upgrade'));
 
         add_action('wp_enqueue_scripts', array($this, 'register_assets'));
@@ -70,11 +69,6 @@ class Dadsoo_Ajax_Comment
 
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('elementor/widgets/register', array($this, 'register_elementor_widgets'));
-    }
-
-    public function load_textdomain()
-    {
-        load_plugin_textdomain('dadsoo-ajax-comment', false, dirname(plugin_basename(DADSOO_AJAX_COMMENT_FILE)) . '/languages');
     }
 
     /**
